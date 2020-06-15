@@ -1,0 +1,313 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <VCProjectVersion>15.0</VCProjectVersion>
+    <ProjectGuid>{6FCC07C9-5E2E-436C-A9CE-225F6C6CE3CD}</ProjectGuid>
+    <Keyword>Win32Proj</Keyword>
+    <RootNamespace>scbCompiler</RootNamespace>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v142</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v142</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v142</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v142</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="Shared">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <LinkIncremental>true</LinkIncremental>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <LinkIncremental>true</LinkIncremental>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <LinkIncremental>false</LinkIncremental>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <LinkIncremental>false</LinkIncremental>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <LanguageStandard>stdcpp17</LanguageStandard>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <LanguageStandard>stdcpp17</LanguageStandard>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <LanguageStandard>stdcpp17</LanguageStandard>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <LanguageStandard>stdcpp17</LanguageStandard>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClInclude Include="scbApparatManager.h" />
+    <ClInclude Include="scbComplexName.h" />
+    <ClInclude Include="scbDescription.h" />
+    <ClInclude Include="scbDeviceManager.h" />
+    <ClInclude Include="scbSchemeCapacitor.h" />
+    <ClInclude Include="scbSchemeCondition.h" />
+    <ClInclude Include="scbSchemeConditionObject.h" />
+    <ClInclude Include="scbSchemeCross.h" />
+    <ClInclude Include="scbSchemeDiode.h" />
+    <ClInclude Include="scbSchemeEvent.h" />
+    <ClInclude Include="scbSchemeFuse.h" />
+    <ClInclude Include="scbSchemeIncorrectRelay.h" />
+    <ClInclude Include="scbSchemeInput.h" />
+    <ClInclude Include="scbSchemeInputDescriptor.h" />
+    <ClInclude Include="scbSchemeLine.h" />
+    <ClInclude Include="scbMessage.h" />
+    <ClInclude Include="scbManager.h" />
+    <ClInclude Include="scbMessagePool.h" />
+    <ClInclude Include="scbSchemeMeasuringPanel.h" />
+    <ClInclude Include="scbSchemeOutput.h" />
+    <ClInclude Include="scbParseInfo.h" />
+    <ClInclude Include="scbRelay_ANVSH2_2400.h" />
+    <ClInclude Include="scbRelay_DSSH13A.h" />
+    <ClInclude Include="scbRelay_KDR1M_120.h" />
+    <ClInclude Include="scbRelay_KDR1M_280.h" />
+    <ClInclude Include="scbRelay_KDR1M_3_8.h" />
+    <ClInclude Include="scbRelay_KDR1M_435.h" />
+    <ClInclude Include="scbRelay_KDR1_200.h" />
+    <ClInclude Include="scbRelay_KDR1_280.h" />
+    <ClInclude Include="scbRelay_KMSH_3000.h" />
+    <ClInclude Include="scbRelay_KMSH_450.h" />
+    <ClInclude Include="scbRelay_KMSH_750.h" />
+    <ClInclude Include="scbRelay_NMPSH2_400.h" />
+    <ClInclude Include="scbRelay_NMPSH3M_02_250.h" />
+    <ClInclude Include="scbRelay_NMPSH_900.h" />
+    <ClInclude Include="scbRelay_NMSH1_1440.h" />
+    <ClInclude Include="scbRelay_NMSH1_400.h" />
+    <ClInclude Include="scbRelay_NMSH2_4000.h" />
+    <ClInclude Include="scbRelay_NMSH3_460_400.h" />
+    <ClInclude Include="scbRelay_NMSH4_2400.h" />
+    <ClInclude Include="scbRelay_NMSH4_3.h" />
+    <ClInclude Include="scbRelay_NMSHM1_1000_560.h" />
+    <ClInclude Include="scbRelay_NMSHM1_11.h" />
+    <ClInclude Include="scbRelay_NMSHM1_1120.h" />
+    <ClInclude Include="scbRelay_NMSHM1_560.h" />
+    <ClInclude Include="scbRelay_NMSHM2_1500.h" />
+    <ClInclude Include="scbRelay_NMSHM2_1_5.h" />
+    <ClInclude Include="scbRelay_NMSHM2_3000.h" />
+    <ClInclude Include="scbRelay_OMSH2_46.h" />
+    <ClInclude Include="scbRelay_PMPUSH_150_150.h" />
+    <ClInclude Include="scbRelay_PPR3_5000.h" />
+    <ClInclude Include="scbSchemeBlock.h" />
+    <ClInclude Include="scbSchemeDescription.h" />
+    <ClInclude Include="scbSchemeEquipment.h" />
+    <ClInclude Include="scbSchemeExtendedBlock.h" />
+    <ClInclude Include="scbSchemeExternalConnection.h" />
+    <ClInclude Include="scbSchemeExternalLink.h" />
+    <ClInclude Include="scbSchemeInternalConnection.h" />
+    <ClInclude Include="scbSchemeManager.h" />
+    <ClInclude Include="scbSchemeOutputDescriptor.h" />
+    <ClInclude Include="scbSchemeRelay.h" />
+    <ClInclude Include="scbSchemeObject.h" />
+    <ClInclude Include="scbSchemeRequestedRequirement.h" />
+    <ClInclude Include="scbSchemeRheostat.h" />
+    <ClInclude Include="scbSchemeGrantingRequirement.h" />
+    <ClInclude Include="scbSchemeResistor.h" />
+    <ClInclude Include="scbSchemeStatus.h" />
+    <ClInclude Include="scbSchemeTimeBlock.h" />
+    <ClInclude Include="scbSchemeTransformer_SKT.h" />
+    <ClInclude Include="scbSchemeTransformer_ST4.h" />
+    <ClInclude Include="scbSchemeTransformer_ST5.h" />
+    <ClInclude Include="scbSchemeTuning.h" />
+    <ClInclude Include="scbSchemeVariable.h" />
+    <ClInclude Include="stdafx.h" />
+    <ClInclude Include="targetver.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="scbApparatManager.cpp" />
+    <ClCompile Include="scbCompiler.cpp" />
+    <ClCompile Include="scbComplexName.cpp" />
+    <ClCompile Include="scbDescription.cpp" />
+    <ClCompile Include="scbDeviceManager.cpp" />
+    <ClCompile Include="scbSchemeCapacitor.cpp" />
+    <ClCompile Include="scbSchemeCondition.cpp" />
+    <ClCompile Include="scbSchemeConditionObject.cpp" />
+    <ClCompile Include="scbSchemeCross.cpp" />
+    <ClCompile Include="scbSchemeDiode.cpp" />
+    <ClCompile Include="scbSchemeEvent.cpp" />
+    <ClCompile Include="scbSchemeExtendedBlock.cpp" />
+    <ClCompile Include="scbSchemeFuse.cpp" />
+    <ClCompile Include="scbSchemeIncorrectRelay.cpp" />
+    <ClCompile Include="scbSchemeInput.cpp" />
+    <ClCompile Include="scbSchemeLine.cpp" />
+    <ClCompile Include="scbManager.cpp" />
+    <ClCompile Include="scbMessage.cpp" />
+    <ClCompile Include="scbMessagePool.cpp" />
+    <ClCompile Include="scbSchemeManager_Parser.cpp" />
+    <ClCompile Include="scbSchemeMeasuringPanel.cpp" />
+    <ClCompile Include="scbSchemeOutput.cpp" />
+    <ClCompile Include="scbRelay_ANVSH2_2400.cpp" />
+    <ClCompile Include="scbRelay_DSSH13A.cpp" />
+    <ClCompile Include="scbRelay_KDR1M_120.cpp" />
+    <ClCompile Include="scbRelay_KDR1M_280.cpp" />
+    <ClCompile Include="scbRelay_KDR1M_3_8.cpp" />
+    <ClCompile Include="scbRelay_KDR1M_435.cpp" />
+    <ClCompile Include="scbRelay_KDR1_200.cpp" />
+    <ClCompile Include="scbRelay_KDR1_280.cpp" />
+    <ClCompile Include="scbRelay_KMSH_450.cpp" />
+    <ClCompile Include="scbRelay_NMPSH_900.cpp" />
+    <ClCompile Include="scbRelay_NMSH3_460_400.cpp" />
+    <ClCompile Include="scbRelay_NMSH4_3.cpp" />
+    <ClCompile Include="scbRelay_NMSHM1_1000_560.cpp" />
+    <ClCompile Include="scbRelay_KMSH_3000.cpp" />
+    <ClCompile Include="scbRelay_KMSH_750.cpp" />
+    <ClCompile Include="scbRelay_NMPSH3M_02_250.cpp" />
+    <ClCompile Include="scbRelay_NMPSH2_400.cpp" />
+    <ClCompile Include="scbRelay_NMSH1_1440.cpp" />
+    <ClCompile Include="scbRelay_NMSH1_400.cpp" />
+    <ClCompile Include="scbRelay_NMSH2_4000.cpp" />
+    <ClCompile Include="scbRelay_NMSH4_2400.cpp" />
+    <ClCompile Include="scbRelay_NMSHM1_11.cpp" />
+    <ClCompile Include="scbRelay_NMSHM1_1120.cpp" />
+    <ClCompile Include="scbRelay_NMSHM1_560.cpp" />
+    <ClCompile Include="scbRelay_NMSHM2_1500.cpp" />
+    <ClCompile Include="scbRelay_NMSHM2_1_5.cpp" />
+    <ClCompile Include="scbRelay_NMSHM2_3000.cpp" />
+    <ClCompile Include="scbRelay_OMSH2_46.cpp" />
+    <ClCompile Include="scbRelay_PMPUSH_150_150.cpp" />
+    <ClCompile Include="scbRelay_PPR3_5000.cpp" />
+    <ClCompile Include="scbSchemeBlock.cpp" />
+    <ClCompile Include="scbSchemeDescrption.cpp" />
+    <ClCompile Include="scbSchemeEquipment.cpp" />
+    <ClCompile Include="scbSchemeExternalConnection.cpp" />
+    <ClCompile Include="scbSchemeExternalLink.cpp" />
+    <ClCompile Include="scbSchemeInternalConnection.cpp" />
+    <ClCompile Include="scbSchemeManager.cpp" />
+    <ClCompile Include="scbSchemeObject.cpp" />
+    <ClCompile Include="scbSchemeRelay.cpp" />
+    <ClCompile Include="scbSchemeGrantingRequirement.cpp" />
+    <ClCompile Include="scbSchemeRequestedRequirement.cpp" />
+    <ClCompile Include="scbSchemeResistor.cpp" />
+    <ClCompile Include="scbSchemeRheostat.cpp" />
+    <ClCompile Include="scbSchemeStatus.cpp" />
+    <ClCompile Include="scbSchemeTimeBlock.cpp" />
+    <ClCompile Include="scbSchemeTransformer_SKT.cpp" />
+    <ClCompile Include="scbSchemeTransformer_ST4.cpp" />
+    <ClCompile Include="scbSchemeTransformer_ST5.cpp" />
+    <ClCompile Include="scbSchemeTuning.cpp" />
+    <ClCompile Include="scbSchemeVariable.cpp" />
+    <ClCompile Include="stdafx.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
+    </ClCompile>
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

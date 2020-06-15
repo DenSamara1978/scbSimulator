@@ -1,0 +1,471 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Исходные файлы">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Файлы заголовков">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="Файлы ресурсов">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="Файлы заголовков\SchemeObject">
+      <UniqueIdentifier>{5e7aa913-45df-413a-bf85-7f232097484c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Исходные файлы\SchemeObject">
+      <UniqueIdentifier>{537ed33c-92b0-44eb-8546-02aa60532d00}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="stdafx.h">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="targetver.h">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="scbSchemeManager.h">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="scbManager.h">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="scbMessage.h">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="scbDeviceManager.h">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="scbApparatManager.h">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="scbSchemeRelay.h">
+      <Filter>Файлы заголовков\SchemeObject</Filter>
+    </ClInclude>
+    <ClInclude Include="scbSchemeObject.h">
+      <Filter>Файлы заголовков\SchemeObject</Filter>
+    </ClInclude>
+    <ClInclude Include="scbRelay_NMSH1_1440.h">
+      <Filter>Файлы заголовков\SchemeObject</Filter>
+    </ClInclude>
+    <ClInclude Include="scbMessagePool.h">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="scbParseInfo.h">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="scbRelay_NMSH1_400.h">
+      <Filter>Файлы заголовков\SchemeObject</Filter>
+    </ClInclude>
+    <ClInclude Include="scbRelay_NMSH2_4000.h">
+      <Filter>Файлы заголовков\SchemeObject</Filter>
+    </ClInclude>
+    <ClInclude Include="scbRelay_KMSH_3000.h">
+      <Filter>Файлы заголовков\SchemeObject</Filter>
+    </ClInclude>
+    <ClInclude Include="scbRelay_KMSH_750.h">
+      <Filter>Файлы заголовков\SchemeObject</Filter>
+    </ClInclude>
+    <ClInclude Include="scbRelay_NMPSH2_400.h">
+      <Filter>Файлы заголовков\SchemeObject</Filter>
+    </ClInclude>
+    <ClInclude Include="scbRelay_NMPSH3M_02_250.h">
+      <Filter>Файлы заголовков\SchemeObject</Filter>
+    </ClInclude>
+    <ClInclude Include="scbRelay_NMSH4_2400.h">
+      <Filter>Файлы заголовков\SchemeObject</Filter>
+    </ClInclude>
+    <ClInclude Include="scbRelay_PMPUSH_150_150.h">
+      <Filter>Файлы заголовков\SchemeObject</Filter>
+    </ClInclude>
+    <ClInclude Include="scbRelay_NMSHM1_560.h">
+      <Filter>Файлы заголовков\SchemeObject</Filter>
+    </ClInclude>
+    <ClInclude Include="scbRelay_NMSHM1_1120.h">
+      <Filter>Файлы заголовков\SchemeObject</Filter>
+    </ClInclude>
+    <ClInclude Include="scbRelay_NMSHM1_1000_560.h">
+      <Filter>Файлы заголовков\SchemeObject</Filter>
+    </ClInclude>
+    <ClInclude Include="scbRelay_NMSHM2_1500.h">
+      <Filter>Файлы заголовков\SchemeObject</Filter>
+    </ClInclude>
+    <ClInclude Include="scbRelay_NMSHM2_3000.h">
+      <Filter>Файлы заголовков\SchemeObject</Filter>
+    </ClInclude>
+    <ClInclude Include="scbRelay_NMSH3_460_400.h">
+      <Filter>Файлы заголовков\SchemeObject</Filter>
+    </ClInclude>
+    <ClInclude Include="scbRelay_NMSH4_3.h">
+      <Filter>Файлы заголовков\SchemeObject</Filter>
+    </ClInclude>
+    <ClInclude Include="scbRelay_OMSH2_46.h">
+      <Filter>Файлы заголовков\SchemeObject</Filter>
+    </ClInclude>
+    <ClInclude Include="scbRelay_KMSH_450.h">
+      <Filter>Файлы заголовков\SchemeObject</Filter>
+    </ClInclude>
+    <ClInclude Include="scbRelay_NMPSH_900.h">
+      <Filter>Файлы заголовков\SchemeObject</Filter>
+    </ClInclude>
+    <ClInclude Include="scbRelay_ANVSH2_2400.h">
+      <Filter>Файлы заголовков\SchemeObject</Filter>
+    </ClInclude>
+    <ClInclude Include="scbRelay_NMSHM1_11.h">
+      <Filter>Файлы заголовков\SchemeObject</Filter>
+    </ClInclude>
+    <ClInclude Include="scbRelay_NMSHM2_1_5.h">
+      <Filter>Файлы заголовков\SchemeObject</Filter>
+    </ClInclude>
+    <ClInclude Include="scbRelay_KDR1_200.h">
+      <Filter>Файлы заголовков\SchemeObject</Filter>
+    </ClInclude>
+    <ClInclude Include="scbRelay_DSSH13A.h">
+      <Filter>Файлы заголовков\SchemeObject</Filter>
+    </ClInclude>
+    <ClInclude Include="scbRelay_PPR3_5000.h">
+      <Filter>Файлы заголовков\SchemeObject</Filter>
+    </ClInclude>
+    <ClInclude Include="scbRelay_KDR1_280.h">
+      <Filter>Файлы заголовков\SchemeObject</Filter>
+    </ClInclude>
+    <ClInclude Include="scbRelay_KDR1M_3_8.h">
+      <Filter>Файлы заголовков\SchemeObject</Filter>
+    </ClInclude>
+    <ClInclude Include="scbRelay_KDR1M_120.h">
+      <Filter>Файлы заголовков\SchemeObject</Filter>
+    </ClInclude>
+    <ClInclude Include="scbRelay_KDR1M_280.h">
+      <Filter>Файлы заголовков\SchemeObject</Filter>
+    </ClInclude>
+    <ClInclude Include="scbRelay_KDR1M_435.h">
+      <Filter>Файлы заголовков\SchemeObject</Filter>
+    </ClInclude>
+    <ClInclude Include="scbSchemeBlock.h">
+      <Filter>Файлы заголовков\SchemeObject</Filter>
+    </ClInclude>
+    <ClInclude Include="scbSchemeEquipment.h">
+      <Filter>Файлы заголовков\SchemeObject</Filter>
+    </ClInclude>
+    <ClInclude Include="scbSchemeExtendedBlock.h">
+      <Filter>Файлы заголовков\SchemeObject</Filter>
+    </ClInclude>
+    <ClInclude Include="scbSchemeDescription.h">
+      <Filter>Файлы заголовков\SchemeObject</Filter>
+    </ClInclude>
+    <ClInclude Include="scbComplexName.h">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="scbDescription.h">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="scbSchemeExternalConnection.h">
+      <Filter>Файлы заголовков\SchemeObject</Filter>
+    </ClInclude>
+    <ClInclude Include="scbSchemeInternalConnection.h">
+      <Filter>Файлы заголовков\SchemeObject</Filter>
+    </ClInclude>
+    <ClInclude Include="scbSchemeExternalLink.h">
+      <Filter>Файлы заголовков\SchemeObject</Filter>
+    </ClInclude>
+    <ClInclude Include="scbSchemeStatus.h">
+      <Filter>Файлы заголовков\SchemeObject</Filter>
+    </ClInclude>
+    <ClInclude Include="scbSchemeTuning.h">
+      <Filter>Файлы заголовков\SchemeObject</Filter>
+    </ClInclude>
+    <ClInclude Include="scbSchemeVariable.h">
+      <Filter>Файлы заголовков\SchemeObject</Filter>
+    </ClInclude>
+    <ClInclude Include="scbSchemeInput.h">
+      <Filter>Файлы заголовков\SchemeObject</Filter>
+    </ClInclude>
+    <ClInclude Include="scbSchemeLine.h">
+      <Filter>Файлы заголовков\SchemeObject</Filter>
+    </ClInclude>
+    <ClInclude Include="scbSchemeOutput.h">
+      <Filter>Файлы заголовков\SchemeObject</Filter>
+    </ClInclude>
+    <ClInclude Include="scbSchemeIncorrectRelay.h">
+      <Filter>Файлы заголовков\SchemeObject</Filter>
+    </ClInclude>
+    <ClInclude Include="scbSchemeCondition.h">
+      <Filter>Файлы заголовков\SchemeObject</Filter>
+    </ClInclude>
+    <ClInclude Include="scbSchemeConditionObject.h">
+      <Filter>Файлы заголовков\SchemeObject</Filter>
+    </ClInclude>
+    <ClInclude Include="scbSchemeCross.h">
+      <Filter>Файлы заголовков\SchemeObject</Filter>
+    </ClInclude>
+    <ClInclude Include="scbSchemeCapacitor.h">
+      <Filter>Файлы заголовков\SchemeObject</Filter>
+    </ClInclude>
+    <ClInclude Include="scbSchemeResistor.h">
+      <Filter>Файлы заголовков\SchemeObject</Filter>
+    </ClInclude>
+    <ClInclude Include="scbSchemeRheostat.h">
+      <Filter>Файлы заголовков\SchemeObject</Filter>
+    </ClInclude>
+    <ClInclude Include="scbSchemeFuse.h">
+      <Filter>Файлы заголовков\SchemeObject</Filter>
+    </ClInclude>
+    <ClInclude Include="scbSchemeDiode.h">
+      <Filter>Файлы заголовков\SchemeObject</Filter>
+    </ClInclude>
+    <ClInclude Include="scbSchemeTimeBlock.h">
+      <Filter>Файлы заголовков\SchemeObject</Filter>
+    </ClInclude>
+    <ClInclude Include="scbSchemeMeasuringPanel.h">
+      <Filter>Файлы заголовков\SchemeObject</Filter>
+    </ClInclude>
+    <ClInclude Include="scbSchemeTransformer_ST5.h">
+      <Filter>Файлы заголовков\SchemeObject</Filter>
+    </ClInclude>
+    <ClInclude Include="scbSchemeTransformer_ST4.h">
+      <Filter>Файлы заголовков\SchemeObject</Filter>
+    </ClInclude>
+    <ClInclude Include="scbSchemeTransformer_SKT.h">
+      <Filter>Файлы заголовков\SchemeObject</Filter>
+    </ClInclude>
+    <ClInclude Include="scbSchemeEvent.h">
+      <Filter>Файлы заголовков\SchemeObject</Filter>
+    </ClInclude>
+    <ClInclude Include="scbSchemeInputDescriptor.h">
+      <Filter>Файлы заголовков\SchemeObject</Filter>
+    </ClInclude>
+    <ClInclude Include="scbSchemeOutputDescriptor.h">
+      <Filter>Файлы заголовков\SchemeObject</Filter>
+    </ClInclude>
+    <ClInclude Include="scbSchemeGrantingRequirement.h">
+      <Filter>Файлы заголовков\SchemeObject</Filter>
+    </ClInclude>
+    <ClInclude Include="scbSchemeRequestedRequirement.h">
+      <Filter>Файлы заголовков\SchemeObject</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="stdafx.cpp">
+      <Filter>Исходные файлы</Filter>
+    </ClCompile>
+    <ClCompile Include="scbCompiler.cpp">
+      <Filter>Исходные файлы</Filter>
+    </ClCompile>
+    <ClCompile Include="scbManager.cpp">
+      <Filter>Исходные файлы</Filter>
+    </ClCompile>
+    <ClCompile Include="scbSchemeManager.cpp">
+      <Filter>Исходные файлы</Filter>
+    </ClCompile>
+    <ClCompile Include="scbDeviceManager.cpp">
+      <Filter>Исходные файлы</Filter>
+    </ClCompile>
+    <ClCompile Include="scbApparatManager.cpp">
+      <Filter>Исходные файлы</Filter>
+    </ClCompile>
+    <ClCompile Include="scbSchemeObject.cpp">
+      <Filter>Исходные файлы\SchemeObject</Filter>
+    </ClCompile>
+    <ClCompile Include="scbSchemeRelay.cpp">
+      <Filter>Исходные файлы\SchemeObject</Filter>
+    </ClCompile>
+    <ClCompile Include="scbRelay_NMSH1_1440.cpp">
+      <Filter>Исходные файлы\SchemeObject</Filter>
+    </ClCompile>
+    <ClCompile Include="scbMessagePool.cpp">
+      <Filter>Исходные файлы</Filter>
+    </ClCompile>
+    <ClCompile Include="scbMessage.cpp">
+      <Filter>Исходные файлы</Filter>
+    </ClCompile>
+    <ClCompile Include="scbRelay_NMSH1_400.cpp">
+      <Filter>Исходные файлы\SchemeObject</Filter>
+    </ClCompile>
+    <ClCompile Include="scbRelay_NMSH2_4000.cpp">
+      <Filter>Исходные файлы\SchemeObject</Filter>
+    </ClCompile>
+    <ClCompile Include="scbRelay_NMSH4_2400.cpp">
+      <Filter>Исходные файлы\SchemeObject</Filter>
+    </ClCompile>
+    <ClCompile Include="scbRelay_NMPSH2_400.cpp">
+      <Filter>Исходные файлы\SchemeObject</Filter>
+    </ClCompile>
+    <ClCompile Include="scbRelay_PMPUSH_150_150.cpp">
+      <Filter>Исходные файлы\SchemeObject</Filter>
+    </ClCompile>
+    <ClCompile Include="scbRelay_NMPSH3M_02_250.cpp">
+      <Filter>Исходные файлы\SchemeObject</Filter>
+    </ClCompile>
+    <ClCompile Include="scbRelay_KMSH_3000.cpp">
+      <Filter>Исходные файлы\SchemeObject</Filter>
+    </ClCompile>
+    <ClCompile Include="scbRelay_KMSH_750.cpp">
+      <Filter>Исходные файлы\SchemeObject</Filter>
+    </ClCompile>
+    <ClCompile Include="scbRelay_NMSHM1_560.cpp">
+      <Filter>Исходные файлы\SchemeObject</Filter>
+    </ClCompile>
+    <ClCompile Include="scbRelay_NMSHM1_1120.cpp">
+      <Filter>Исходные файлы\SchemeObject</Filter>
+    </ClCompile>
+    <ClCompile Include="scbRelay_NMSHM1_1000_560.cpp">
+      <Filter>Исходные файлы\SchemeObject</Filter>
+    </ClCompile>
+    <ClCompile Include="scbRelay_NMSH3_460_400.cpp">
+      <Filter>Исходные файлы\SchemeObject</Filter>
+    </ClCompile>
+    <ClCompile Include="scbRelay_NMSHM2_1500.cpp">
+      <Filter>Исходные файлы\SchemeObject</Filter>
+    </ClCompile>
+    <ClCompile Include="scbRelay_NMSHM2_3000.cpp">
+      <Filter>Исходные файлы\SchemeObject</Filter>
+    </ClCompile>
+    <ClCompile Include="scbRelay_OMSH2_46.cpp">
+      <Filter>Исходные файлы\SchemeObject</Filter>
+    </ClCompile>
+    <ClCompile Include="scbRelay_KMSH_450.cpp">
+      <Filter>Исходные файлы\SchemeObject</Filter>
+    </ClCompile>
+    <ClCompile Include="scbRelay_NMPSH_900.cpp">
+      <Filter>Исходные файлы\SchemeObject</Filter>
+    </ClCompile>
+    <ClCompile Include="scbRelay_NMSHM1_11.cpp">
+      <Filter>Исходные файлы\SchemeObject</Filter>
+    </ClCompile>
+    <ClCompile Include="scbRelay_NMSHM2_1_5.cpp">
+      <Filter>Исходные файлы\SchemeObject</Filter>
+    </ClCompile>
+    <ClCompile Include="scbRelay_ANVSH2_2400.cpp">
+      <Filter>Исходные файлы\SchemeObject</Filter>
+    </ClCompile>
+    <ClCompile Include="scbRelay_DSSH13A.cpp">
+      <Filter>Исходные файлы\SchemeObject</Filter>
+    </ClCompile>
+    <ClCompile Include="scbRelay_PPR3_5000.cpp">
+      <Filter>Исходные файлы\SchemeObject</Filter>
+    </ClCompile>
+    <ClCompile Include="scbRelay_KDR1_200.cpp">
+      <Filter>Исходные файлы\SchemeObject</Filter>
+    </ClCompile>
+    <ClCompile Include="scbRelay_KDR1_280.cpp">
+      <Filter>Исходные файлы\SchemeObject</Filter>
+    </ClCompile>
+    <ClCompile Include="scbRelay_KDR1M_3_8.cpp">
+      <Filter>Исходные файлы\SchemeObject</Filter>
+    </ClCompile>
+    <ClCompile Include="scbRelay_KDR1M_120.cpp">
+      <Filter>Исходные файлы\SchemeObject</Filter>
+    </ClCompile>
+    <ClCompile Include="scbRelay_KDR1M_280.cpp">
+      <Filter>Исходные файлы\SchemeObject</Filter>
+    </ClCompile>
+    <ClCompile Include="scbRelay_KDR1M_435.cpp">
+      <Filter>Исходные файлы\SchemeObject</Filter>
+    </ClCompile>
+    <ClCompile Include="scbSchemeBlock.cpp">
+      <Filter>Исходные файлы\SchemeObject</Filter>
+    </ClCompile>
+    <ClCompile Include="scbSchemeEquipment.cpp">
+      <Filter>Исходные файлы\SchemeObject</Filter>
+    </ClCompile>
+    <ClCompile Include="scbSchemeDescrption.cpp">
+      <Filter>Исходные файлы\SchemeObject</Filter>
+    </ClCompile>
+    <ClCompile Include="scbComplexName.cpp">
+      <Filter>Исходные файлы</Filter>
+    </ClCompile>
+    <ClCompile Include="scbDescription.cpp">
+      <Filter>Исходные файлы</Filter>
+    </ClCompile>
+    <ClCompile Include="scbSchemeInternalConnection.cpp">
+      <Filter>Исходные файлы\SchemeObject</Filter>
+    </ClCompile>
+    <ClCompile Include="scbSchemeExternalConnection.cpp">
+      <Filter>Исходные файлы\SchemeObject</Filter>
+    </ClCompile>
+    <ClCompile Include="scbSchemeExternalLink.cpp">
+      <Filter>Исходные файлы\SchemeObject</Filter>
+    </ClCompile>
+    <ClCompile Include="scbSchemeStatus.cpp">
+      <Filter>Исходные файлы\SchemeObject</Filter>
+    </ClCompile>
+    <ClCompile Include="scbSchemeTuning.cpp">
+      <Filter>Исходные файлы\SchemeObject</Filter>
+    </ClCompile>
+    <ClCompile Include="scbSchemeVariable.cpp">
+      <Filter>Исходные файлы\SchemeObject</Filter>
+    </ClCompile>
+    <ClCompile Include="scbSchemeInput.cpp">
+      <Filter>Исходные файлы\SchemeObject</Filter>
+    </ClCompile>
+    <ClCompile Include="scbSchemeLine.cpp">
+      <Filter>Исходные файлы\SchemeObject</Filter>
+    </ClCompile>
+    <ClCompile Include="scbSchemeOutput.cpp">
+      <Filter>Исходные файлы\SchemeObject</Filter>
+    </ClCompile>
+    <ClCompile Include="scbSchemeCondition.cpp">
+      <Filter>Исходные файлы\SchemeObject</Filter>
+    </ClCompile>
+    <ClCompile Include="scbRelay_NMSH4_3.cpp">
+      <Filter>Исходные файлы\SchemeObject</Filter>
+    </ClCompile>
+    <ClCompile Include="scbSchemeConditionObject.cpp">
+      <Filter>Исходные файлы\SchemeObject</Filter>
+    </ClCompile>
+    <ClCompile Include="scbSchemeExtendedBlock.cpp">
+      <Filter>Исходные файлы\SchemeObject</Filter>
+    </ClCompile>
+    <ClCompile Include="scbSchemeIncorrectRelay.cpp">
+      <Filter>Исходные файлы\SchemeObject</Filter>
+    </ClCompile>
+    <ClCompile Include="scbSchemeManager_Parser.cpp">
+      <Filter>Исходные файлы</Filter>
+    </ClCompile>
+    <ClCompile Include="scbSchemeCross.cpp">
+      <Filter>Исходные файлы\SchemeObject</Filter>
+    </ClCompile>
+    <ClCompile Include="scbSchemeCapacitor.cpp">
+      <Filter>Исходные файлы\SchemeObject</Filter>
+    </ClCompile>
+    <ClCompile Include="scbSchemeFuse.cpp">
+      <Filter>Исходные файлы\SchemeObject</Filter>
+    </ClCompile>
+    <ClCompile Include="scbSchemeRheostat.cpp">
+      <Filter>Исходные файлы\SchemeObject</Filter>
+    </ClCompile>
+    <ClCompile Include="scbSchemeResistor.cpp">
+      <Filter>Исходные файлы\SchemeObject</Filter>
+    </ClCompile>
+    <ClCompile Include="scbSchemeDiode.cpp">
+      <Filter>Исходные файлы\SchemeObject</Filter>
+    </ClCompile>
+    <ClCompile Include="scbSchemeTimeBlock.cpp">
+      <Filter>Исходные файлы\SchemeObject</Filter>
+    </ClCompile>
+    <ClCompile Include="scbSchemeMeasuringPanel.cpp">
+      <Filter>Исходные файлы\SchemeObject</Filter>
+    </ClCompile>
+    <ClCompile Include="scbSchemeTransformer_ST4.cpp">
+      <Filter>Исходные файлы\SchemeObject</Filter>
+    </ClCompile>
+    <ClCompile Include="scbSchemeTransformer_ST5.cpp">
+      <Filter>Исходные файлы\SchemeObject</Filter>
+    </ClCompile>
+    <ClCompile Include="scbSchemeTransformer_SKT.cpp">
+      <Filter>Исходные файлы\SchemeObject</Filter>
+    </ClCompile>
+    <ClCompile Include="scbSchemeEvent.cpp">
+      <Filter>Исходные файлы\SchemeObject</Filter>
+    </ClCompile>
+    <ClCompile Include="scbSchemeGrantingRequirement.cpp">
+      <Filter>Исходные файлы\SchemeObject</Filter>
+    </ClCompile>
+    <ClCompile Include="scbSchemeRequestedRequirement.cpp">
+      <Filter>Исходные файлы\SchemeObject</Filter>
+    </ClCompile>
+  </ItemGroup>
+</Project>

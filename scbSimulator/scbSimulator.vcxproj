@@ -1,0 +1,309 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <VCProjectVersion>15.0</VCProjectVersion>
+    <ProjectGuid>{1AFAFC60-0392-43CF-B873-AE45CF1131D4}</ProjectGuid>
+    <Keyword>Win32Proj</Keyword>
+    <RootNamespace>scbSimulator</RootNamespace>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v142</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v142</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v142</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v142</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="Shared">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <LinkIncremental>true</LinkIncremental>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <LinkIncremental>true</LinkIncremental>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <LinkIncremental>false</LinkIncremental>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <LinkIncremental>false</LinkIncremental>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <LanguageStandard>stdcpp17</LanguageStandard>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;d3d11.lib;d3dcompiler.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <LanguageStandard>stdcpp17</LanguageStandard>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;d3d11.lib;d3dcompiler.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <LanguageStandard>stdcpp17</LanguageStandard>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;d3d11.lib;d3dcompiler.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <LanguageStandard>stdcpp17</LanguageStandard>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;d3d11.lib;d3dcompiler.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClInclude Include="genApplication.h" />
+    <ClInclude Include="graphics\graphCamera.h" />
+    <ClInclude Include="graphics\graphIndexBuffer.h" />
+    <ClInclude Include="graphics\graphShader.h" />
+    <ClInclude Include="graphics\graphVertexDeclaration.h" />
+    <ClInclude Include="graphics\graphPixelShader.h" />
+    <ClInclude Include="graphics\graphServer.h" />
+    <ClInclude Include="graphics\graphVertexBuffer.h" />
+    <ClInclude Include="graphics\graphVertexShader.h" />
+    <ClInclude Include="resource.h" />
+    <ClInclude Include="scbSimulator.h" />
+    <ClInclude Include="scb\scbAbstractSchemeDevice.h" />
+    <ClInclude Include="scb\scbBus.h" />
+    <ClInclude Include="scb\scbChain.h" />
+    <ClInclude Include="scb\scbConnectionPoint.h" />
+    <ClInclude Include="scb\scbConnectionPointScheme.h" />
+    <ClInclude Include="scb\scbLightSignal.h" />
+    <ClInclude Include="scb\scbLightSignalLamp.h" />
+    <ClInclude Include="scb\scbMotorDrive.h" />
+    <ClInclude Include="scb\scbMotorDriveDevice.h" />
+    <ClInclude Include="scb\scbPolarRelay.h" />
+    <ClInclude Include="scb\scbPultTablo.h" />
+    <ClInclude Include="scb\scbPultTabloAbstractButton.h" />
+    <ClInclude Include="scb\scbPultTabloAbstractCommutator.h" />
+    <ClInclude Include="scb\scbPultTabloActiveDevice.h" />
+    <ClInclude Include="scb\scbPultTabloAmpermeter.h" />
+    <ClInclude Include="scb\scbPultTabloBell.h" />
+    <ClInclude Include="scb\scbPultTabloButtonKmd.h" />
+    <ClInclude Include="scb\scbPultTabloButtonKmdf.h" />
+    <ClInclude Include="scb\scbPultTabloButtonSchm1m.h" />
+    <ClInclude Include="scb\scbPultTabloCommutatorKmd.h" />
+    <ClInclude Include="scb\scbPultTabloCommutatorKmt.h" />
+    <ClInclude Include="scb\scbPultTabloLampGroup.h" />
+    <ClInclude Include="scb\scbRelay.h" />
+    <ClInclude Include="scb\scbAbstractScheme.h" />
+    <ClInclude Include="scb\scbNeutralRelay.h" />
+    <ClInclude Include="scb\scbScheme.h" />
+    <ClInclude Include="scb\scbSchemeAVX128.h" />
+    <ClInclude Include="scb\scbSchemeAVX256.h" />
+    <ClInclude Include="scb\scbSchemeAVX64.h" />
+    <ClInclude Include="scb\scbSchemeGPR.h" />
+    <ClInclude Include="scb\scbSchemeOutput.h" />
+    <ClInclude Include="scb\scbSchemeSSE128.h" />
+    <ClInclude Include="scb\scbSchemeSSE16.h" />
+    <ClInclude Include="scb\scbSchemeSSE256.h" />
+    <ClInclude Include="scb\scbSchemeSSE32.h" />
+    <ClInclude Include="scb\scbSchemeSSE64.h" />
+    <ClInclude Include="scb\scbTimer.h" />
+    <ClInclude Include="scb\scbTimerRecord.h" />
+    <ClInclude Include="stdafx.h" />
+    <ClInclude Include="targetver.h" />
+    <ClInclude Include="track\trackSwitch.h" />
+    <ClInclude Include="visual\visualAbstract.h" />
+    <ClInclude Include="visual\visualLightSignal.h" />
+    <ClInclude Include="visual\visualMotorDrive.h" />
+    <ClInclude Include="visual\visualPultTabloButton.h" />
+    <ClInclude Include="visual\visualPultTabloCommutator.h" />
+    <ClInclude Include="visual\visualPultTablo.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="genApplication.cpp" />
+    <ClCompile Include="graphics\graphCamera.cpp" />
+    <ClCompile Include="graphics\graphIndexBuffer.cpp" />
+    <ClCompile Include="graphics\graphShader.cpp" />
+    <ClCompile Include="graphics\graphVertexDeclaration.cpp" />
+    <ClCompile Include="graphics\graphPixelShader.cpp" />
+    <ClCompile Include="graphics\graphServer.cpp" />
+    <ClCompile Include="graphics\graphVertexBuffer.cpp" />
+    <ClCompile Include="graphics\graphVertexShader.cpp" />
+    <ClCompile Include="scbSimulator.cpp" />
+    <ClCompile Include="scb\scbAbstractSchemeDevice.cpp" />
+    <ClCompile Include="scb\scbBus.cpp" />
+    <ClCompile Include="scb\scbChain.cpp" />
+    <ClCompile Include="scb\scbConnectionPoint.cpp" />
+    <ClCompile Include="scb\scbConnectionPointScheme.cpp" />
+    <ClCompile Include="scb\scbLightSignal.cpp" />
+    <ClCompile Include="scb\scbLightSignalLamp.cpp" />
+    <ClCompile Include="scb\scbMotorDrive.cpp" />
+    <ClCompile Include="scb\scbMotorDriveDevice.cpp" />
+    <ClCompile Include="scb\scbPolarRelay.cpp" />
+    <ClCompile Include="scb\scbPultTablo.cpp" />
+    <ClCompile Include="scb\scbPultTabloAbstractButton.cpp" />
+    <ClCompile Include="scb\scbPultTabloAbstractCommutator.cpp" />
+    <ClCompile Include="scb\scbPultTabloActiveDevice.cpp" />
+    <ClCompile Include="scb\scbPultTabloAmpermeter.cpp" />
+    <ClCompile Include="scb\scbPultTabloBell.cpp" />
+    <ClCompile Include="scb\scbPultTabloButtonKmd.cpp" />
+    <ClCompile Include="scb\scbPultTabloButtonKmdf.cpp" />
+    <ClCompile Include="scb\scbPultTabloButtonSchm1m.cpp" />
+    <ClCompile Include="scb\scbPultTabloCommutatorKmd.cpp" />
+    <ClCompile Include="scb\scbPultTabloCommutatorKmt.cpp" />
+    <ClCompile Include="scb\scbPultTabloLampGroup.cpp" />
+    <ClCompile Include="scb\scbRelay.cpp" />
+    <ClCompile Include="scb\scbAbstractScheme.cpp" />
+    <ClCompile Include="scb\scbNeutralRelay.cpp" />
+    <ClCompile Include="scb\scbScheme.cpp" />
+    <ClCompile Include="scb\scbSchemeAVX128.cpp" />
+    <ClCompile Include="scb\scbSchemeAVX256.cpp" />
+    <ClCompile Include="scb\scbSchemeAVX64.cpp" />
+    <ClCompile Include="scb\scbSchemeGPR.cpp" />
+    <ClCompile Include="scb\scbSchemeOutput.cpp" />
+    <ClCompile Include="scb\scbSchemeSSE128.cpp" />
+    <ClCompile Include="scb\scbSchemeSSE16.cpp" />
+    <ClCompile Include="scb\scbSchemeSSE256.cpp" />
+    <ClCompile Include="scb\scbSchemeSSE32.cpp" />
+    <ClCompile Include="scb\scbSchemeSSE64.cpp" />
+    <ClCompile Include="scb\scbTimer.cpp" />
+    <ClCompile Include="stdafx.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="track\trackSwitch.cpp" />
+    <ClCompile Include="visual\visualAbstract.cpp" />
+    <ClCompile Include="visual\visualLightSignal.cpp" />
+    <ClCompile Include="visual\visualMotorDrive.cpp" />
+    <ClCompile Include="visual\visualPultTabloButton.cpp" />
+    <ClCompile Include="visual\visualPultTabloCommutator.cpp" />
+    <ClCompile Include="visual\visualPultTablo.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="scbSimulator.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="scbSimulator.ico" />
+    <Image Include="small.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="Shaders.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+      </EntryPointName>
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+      </EntryPointName>
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+      </EntryPointName>
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+      </EntryPointName>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </FxCompile>
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>
