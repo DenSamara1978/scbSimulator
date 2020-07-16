@@ -175,6 +175,7 @@
     <ClInclude Include="scb\LightSignalLamp.h" />
     <ClInclude Include="scb\MotorDriveScheme.h" />
     <ClInclude Include="scb\MotorDriveDevice.h" />
+    <ClInclude Include="scb\OutputStream.h" />
     <ClInclude Include="scb\PolarRelay.h" />
     <ClInclude Include="scb\PultTabloScheme.h" />
     <ClInclude Include="scb\PultTabloAbstractButton.h" />
@@ -205,8 +206,9 @@
     <ClInclude Include="scb\SchemeSse64.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
-    <ClInclude Include="time\Timer.h" />
+    <ClInclude Include="time\TimeServer.h" />
     <ClInclude Include="time\TimerRecord.h" />
+    <ClInclude Include="time\TimeSensable.h" />
     <ClInclude Include="track\Switch.h" />
     <ClInclude Include="util\Color.h" />
     <ClInclude Include="util\Range.h" />
@@ -271,7 +273,8 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="time\Timer.cpp" />
+    <ClCompile Include="time\TimeServer.cpp" />
+    <ClCompile Include="time\TimeSensable.cpp" />
     <ClCompile Include="track\Switch.cpp" />
     <ClCompile Include="visual\VisualAbstract.cpp" />
     <ClCompile Include="visual\LightSignal.cpp" />

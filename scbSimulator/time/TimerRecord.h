@@ -1,24 +1,18 @@
 #pragma once
 
-namespace scb
-{
-	class AbstractSchemeDevice;
-}
-
-using scb::AbstractSchemeDevice;
-
 namespace time
 {
+	class TimeSensable;
 
 	class TimerRecord
 	{
 	public:
-		TimerRecord(AbstractSchemeDevice* device, unsigned long long time, int signal);
+		TimerRecord(TimeSensable* object, unsigned long long time, int signal);
 
 	private:
-		friend class Timer;
+		friend class TimeServer;
 
-		AbstractSchemeDevice* device;
+		TimeSensable* object;
 		TimerRecord* previous;
 		TimerRecord* next;
 		unsigned long long timeToWork;
@@ -26,9 +20,9 @@ namespace time
 
 	};
 
-	inline TimerRecord::TimerRecord(AbstractSchemeDevice* device, unsigned long long time, int signal) :
+	inline TimerRecord::TimerRecord(TimeSensable* object, unsigned long long time, int signal) :
 		timeToWork(time),
-		device(device),
+		object(object),
 		signal(signal),
 		next(nullptr),
 		previous(nullptr)

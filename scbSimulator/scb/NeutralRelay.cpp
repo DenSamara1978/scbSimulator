@@ -1,10 +1,7 @@
 #include "NeutralRelay.h"
 #include "AbstractScheme.h"
-#include "..\time\Timer.h"
 
 using namespace scb;
-
-using time::Timer;
 
 NeutralRelay::NeutralRelay(AbstractScheme* ownerScheme, int onBit) :
 	offContactBit(0),
@@ -59,7 +56,7 @@ void NeutralRelay::setMode(unsigned long mode)
 		return;
 	}
 	unsigned long long newDelay, time;
-	time = Timer::getInstance()->getWorkingTime();
+	time = this->getWorkingTime();
 
 	int starting = -1;
 	int shifting = -1;
@@ -107,7 +104,7 @@ void NeutralRelay::setMode(unsigned long mode)
 			// Начать процесс трогания на подъем
 			this->timeStamp = time;
 			this->status = 1;
-			Timer::getInstance()->addTimeToWork(this, starting, 0);
+			this->addTimeToWork(starting, 0);
 			this->starting = starting;
 			this->shifting = shifting;
 			break;
@@ -117,7 +114,7 @@ void NeutralRelay::setMode(unsigned long mode)
 				// Продолжаем трогаться на подъем по другому времени
 				newDelay = static_cast<unsigned long long> (starting * (1.0f - differenceTime / this->starting));
 				this->timeStamp = time - starting + newDelay;
-				Timer::getInstance()->changeTimeToWork(this, newDelay);
+				this->changeTimeToWork(newDelay);
 				this->starting = starting;
 				this->shifting = shifting;
 			}
@@ -126,7 +123,7 @@ void NeutralRelay::setMode(unsigned long mode)
 				// Переходим в положение без тока
 				this->timeStamp = 0;
 				this->status = 0;
-				Timer::getInstance()->deleteTimeToWork(this);
+				this->deleteTimeToWork();
 				this->starting = 0;
 				this->shifting = 0;
 			}
@@ -137,7 +134,7 @@ void NeutralRelay::setMode(unsigned long mode)
 			if (dir != 1)
 				this->status = 5;
 			this->timeStamp = time - shifting + newDelay;
-			Timer::getInstance()->changeTimeToWork(this, newDelay);
+			this->changeTimeToWork(newDelay);
 			this->starting = starting;
 			this->shifting = shifting;
 			break;
@@ -145,7 +142,7 @@ void NeutralRelay::setMode(unsigned long mode)
 			// Начать процесс трогания на отпускание
 			this->timeStamp = time;
 			this->status = 4;
-			Timer::getInstance()->addTimeToWork(this, starting, 0);
+			this->addTimeToWork(starting, 0);
 			this->starting = starting;
 			this->shifting = shifting;
 			break;
@@ -155,7 +152,7 @@ void NeutralRelay::setMode(unsigned long mode)
 				// Продолжаем трогаться на отпадание по другому времени
 				newDelay = static_cast<unsigned long long> (starting * (1.0f - differenceTime / this->starting));
 				this->timeStamp = time - starting + newDelay;
-				Timer::getInstance()->changeTimeToWork(this, newDelay);
+				this->changeTimeToWork(newDelay);
 				this->starting = starting;
 				this->shifting = shifting;
 			}
@@ -164,7 +161,7 @@ void NeutralRelay::setMode(unsigned long mode)
 				// Переходим в положение под током
 				this->timeStamp = 0;
 				this->status = 3;
-				Timer::getInstance()->deleteTimeToWork(this);
+				this->deleteTimeToWork();
 				this->starting = 0;
 				this->shifting = 0;
 			}
@@ -175,7 +172,7 @@ void NeutralRelay::setMode(unsigned long mode)
 			if (dir != 1)
 				this->status = 2;
 			this->timeStamp = time - shifting + newDelay;
-			Timer::getInstance()->changeTimeToWork(this, newDelay);
+			this->changeTimeToWork(newDelay);
 			this->starting = starting;
 			this->shifting = shifting;
 			break;
@@ -194,7 +191,7 @@ void NeutralRelay::timeToWork(int signal, unsigned long long time)
 				this->ownerScheme->setStatusBit(this->onBridgeContactBit);
 			this->timeStamp = time;
 			this->status = 2;
-			Timer::getInstance()->addTimeToWork(this, this->shifting, 0);
+			this->addTimeToWork(this->shifting, 0);
 			break;
 		case 2:
 			if (this->onContactBit >= 0)
@@ -214,7 +211,7 @@ void NeutralRelay::timeToWork(int signal, unsigned long long time)
 				this->ownerScheme->setStatusBit(this->offBridgeContactBit);
 			this->timeStamp = time;
 			this->status = 5;
-			Timer::getInstance()->addTimeToWork(this, this->shifting, 0);
+			this->addTimeToWork(this->shifting, 0);
 			break;
 		case 5:
 			if (this->hasOffContact && (this->offContactBit >= 0))

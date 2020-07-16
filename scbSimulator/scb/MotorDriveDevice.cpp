@@ -4,8 +4,6 @@
 
 using namespace scb;
 
-using time::Timer;
-
 MotorDriveDevice::MotorDriveDevice(AbstractScheme* ownerScheme) :
 	AbstractSchemeDevice(ownerScheme),
 	temperature(20.0f),
@@ -100,7 +98,7 @@ void MotorDriveDevice::flapDown()
 		case 0:
 			// инициировать опускание
 			if (this->timeStamp == 0)
-				this->timeStamp = Timer::getInstance()->getWorkingTime();
+				this->timeStamp = this->getWorkingTime();
 			this->flapStatus = 1;
 			this->addIdleTimer();
 			break;
@@ -122,7 +120,7 @@ void MotorDriveDevice::flapUp()
 		case 3:
 			// инициировать поднятие
 			if (this->timeStamp == 0)
-				this->timeStamp = Timer::getInstance()->getWorkingTime();
+				this->timeStamp = this->getWorkingTime();
 			this->flapStatus = 4;
 			this->addIdleTimer();
 			break;
@@ -191,7 +189,7 @@ void MotorDriveDevice::changeStatus(const OutputStream& param)
 					this->isGateClose = false;
 					this->addIdleTimer();
 					if (this->timeStamp == 0)
-						this->timeStamp = Timer::getInstance()->getWorkingTime();
+						this->timeStamp = this->getWorkingTime();
 				case 3:
 				case 4:
 					this->ownerScheme->resetStatusBit(this->frictionAmperageBit);
@@ -211,7 +209,7 @@ void MotorDriveDevice::changeStatus(const OutputStream& param)
 					this->isGateClose = false;
 					this->addIdleTimer();
 					if (this->timeStamp == 0)
-						this->timeStamp = Timer::getInstance()->getWorkingTime();
+						this->timeStamp = this->getWorkingTime();
 				case 1:
 				case 2:
 					this->ownerScheme->resetStatusBit(this->frictionAmperageBit);

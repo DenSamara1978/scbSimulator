@@ -1,17 +1,15 @@
 #include "AbstractScheme.h"
 #include "SchemeOutput.h"
-#include "..\time\Timer.h"
+#include "SchemeServer.h"
 
 using namespace scb;
-
-using time::Timer;
 
 AbstractScheme::~AbstractScheme()
 {
 	if (this->markedToRecalculate)
 	{
 		this->markedToRecalculate = false;
-		Timer::getInstance()->deleteSchemeToRecalculate(this);
+		SchemeServer::getInstance()->deleteSchemeToRecalculate(this);
 	}
 	for (auto& ptr : this->devices)
 	{
@@ -49,4 +47,11 @@ void AbstractScheme::mapInputOutput ( int outputIndex, int inputBit, int outputB
 	bool inRange = (outputIndex >= 0) and (outputIndex < static_cast<int>(this->devices.size ()));
 	if ( inRange and ( this->devices[outputIndex] != nullptr))
 		this->devices[outputIndex]->mapInputOutput(inputBit, outputBit);
+}
+
+void AbstractScheme::markToRecalculate()
+{
+	if (!this->markedToRecalculate)
+		SchemeServer::getInstance()->addSchemeToRecalculate(this);
+	this->markedToRecalculate = true;
 }

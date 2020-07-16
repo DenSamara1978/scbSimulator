@@ -1,5 +1,6 @@
 #include "..\resource.h"
 #include "Application.h"
+#include "..\time\TimeServer.h"
 #include "..\visual\PultTablo.h"
 #include "..\visual\PultTabloButton.h"
 #include "..\visual\PultTabloCommutator.h"
@@ -32,6 +33,7 @@
 using namespace scb;
 using namespace visual;
 using namespace graphics;
+using namespace time;
 
 using application::Application;
 
@@ -65,7 +67,8 @@ void Application::runMessageLoop()
 		}
 		else
 		{
-			this->timer.tick();
+			TimeServer::getInstance()->tick();
+			SchemeServer::getInstance()->recalculateSchemes();
 			if (GraphicsServer::getInstance()->render() != S_OK)
 				break;
 		}

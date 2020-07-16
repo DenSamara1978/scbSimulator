@@ -3,8 +3,6 @@
 
 using namespace scb;
 
-using time::Timer;
-
 LightSignalLamp::LightSignalLamp(AbstractScheme* ownerScheme) :
 	AbstractSchemeDevice(ownerScheme),
 	status(0),
@@ -31,7 +29,7 @@ void LightSignalLamp::changeStatus(const OutputStream& param)
 	this->status = targetStatus[param.mask[0] & 0xF];
 	if (oldStatus != this->status)
 	{
-		this->timeStamp = Timer::getInstance()->getWorkingTime();
+		this->timeStamp = this->getWorkingTime();
 		if (LightSignalLamp::targetBright[this->status] > this->bright)
 			this->velocity = lampOnVelocity;
 		else

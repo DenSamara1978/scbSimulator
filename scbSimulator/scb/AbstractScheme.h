@@ -2,9 +2,7 @@
 
 #include <vector>
 #include <string>
-#include <emmintrin.h>
-#include <immintrin.h>
-#include "..\time\Timer.h"
+#include "OutputStream.h"
 
 using std::wstring;
 using std::vector;
@@ -13,13 +11,6 @@ namespace scb
 {
 
 	class AbstractSchemeDevice;
-
-	union OutputStream
-	{
-		unsigned long mask[8];
-		__m128i sseMask[2];
-		__m256i avxMask;
-	};
 
 	class AbstractScheme
 	{
@@ -42,12 +33,13 @@ namespace scb
 		virtual void correctInputStatus(const OutputStream& maskOn, const OutputStream& maskOff, int id) abstract;
 
 		void markToRecalculate();
-		void markRecalculated();
-		bool isNotMarkedToRecalculate() const;
 
 	protected:
 		// Устройства, принадлежащие этой схеме
 		vector<AbstractSchemeDevice*> devices;
+
+		void markRecalculated();
+		bool isNotMarkedToRecalculate() const;
 
 	private:
 		wstring name;
@@ -73,13 +65,6 @@ namespace scb
 	inline AbstractSchemeDevice* AbstractScheme::getDevice(int index) const
 	{
 		return ((index >= 0) && (index < static_cast<int>(this->devices.size ()))) ? this->devices[index] : nullptr;
-	}
-
-	inline void AbstractScheme::markToRecalculate()
-	{
-		if (!this->markedToRecalculate)
-			time::Timer::getInstance()->addSchemeToRecalculate(this);
-		this->markedToRecalculate = true;
 	}
 
 	inline void AbstractScheme::markRecalculated()

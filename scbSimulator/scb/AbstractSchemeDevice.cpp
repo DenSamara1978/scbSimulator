@@ -1,21 +1,15 @@
 #include "AbstractSchemeDevice.h"
-#include "AbstractScheme.h"
 
 using namespace scb;
 
-using time::Timer;
-
 AbstractSchemeDevice::AbstractSchemeDevice(AbstractScheme* ownerScheme) :
-	ownerScheme(ownerScheme),
-	hasIdleTimer(false)
+	ownerScheme(ownerScheme)
 {
 }
 
 AbstractSchemeDevice::~AbstractSchemeDevice()
 {
-	auto timer = Timer::getInstance();
-	timer->deleteIdleTimer(this);
-	timer->deleteTimeToWork(this);
+	this->cleanupTimers();
 	this->ownerScheme = nullptr;
 }
 
@@ -30,7 +24,3 @@ void AbstractSchemeDevice::mapInputOutput(int inputBit, int outputBit)
 	this->convertations.push_back(conv);
 }
 
-void AbstractSchemeDevice::timeToWork(int signal, unsigned long long time)
-{
-	// Ïףסעמי גûחמג
-}

@@ -2,8 +2,6 @@
 
 using namespace scb;
 
-using time::Timer;
-
 PultTabloAbstractCommutator::PultTabloAbstractCommutator(AbstractScheme* ownerScheme, Color color, int leftPosOnBit, int leftPosOffBit, int rightPosOnBit, int rightPosOffBit) :
 	PultTabloActiveDevice(ownerScheme),
 	pressable(false),
@@ -59,7 +57,7 @@ void PultTabloAbstractCommutator::press()
 		case 0:
 			// инициировать нажатие
 			if (this->timeStamp == 0)
-				this->timeStamp = Timer::getInstance()->getWorkingTime();
+				this->timeStamp = this->getWorkingTime();
 			this->pressStatus = 1;
 			this->addIdleTimer();
 			break;
@@ -82,7 +80,7 @@ void PultTabloAbstractCommutator::release()
 		case 2:
 			// инициировать отпускание
 			if (this->timeStamp == 0)
-				this->timeStamp = Timer::getInstance()->getWorkingTime();
+				this->timeStamp = this->getWorkingTime();
 			this->pressStatus = 3;
 			this->addIdleTimer();
 			break;

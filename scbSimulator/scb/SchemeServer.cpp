@@ -113,3 +113,12 @@ void SchemeServer::initialize()
 		scheme->markToRecalculate();
 	}
 }
+
+void SchemeServer::recalculateSchemes()
+{
+	while (!this->recalculateDeque.empty())
+	{
+		this->recalculateDeque.front()->recalculate();
+		this->recalculateDeque.pop_front();
+	}
+}

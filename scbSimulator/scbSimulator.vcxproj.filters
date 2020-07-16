@@ -231,11 +231,17 @@
     <ClInclude Include="application\Application.h">
       <Filter>Файлы заголовков\application</Filter>
     </ClInclude>
-    <ClInclude Include="time\Timer.h">
-      <Filter>Файлы заголовков\time</Filter>
-    </ClInclude>
     <ClInclude Include="time\TimerRecord.h">
       <Filter>Файлы заголовков\time</Filter>
+    </ClInclude>
+    <ClInclude Include="time\TimeSensable.h">
+      <Filter>Файлы заголовков\time</Filter>
+    </ClInclude>
+    <ClInclude Include="time\TimeServer.h">
+      <Filter>Файлы заголовков\time</Filter>
+    </ClInclude>
+    <ClInclude Include="scb\OutputStream.h">
+      <Filter>Файлы заголовков\scb</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -404,7 +410,10 @@
     <ClCompile Include="application\Application.cpp">
       <Filter>Исходные файлы\application</Filter>
     </ClCompile>
-    <ClCompile Include="time\Timer.cpp">
+    <ClCompile Include="time\TimeSensable.cpp">
+      <Filter>Исходные файлы\time</Filter>
+    </ClCompile>
+    <ClCompile Include="time\TimeServer.cpp">
       <Filter>Исходные файлы\time</Filter>
     </ClCompile>
   </ItemGroup>

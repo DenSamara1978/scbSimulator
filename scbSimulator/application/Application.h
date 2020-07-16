@@ -8,25 +8,11 @@
 #include <string>
 #include <algorithm>
 #include "..\stdafx.h"
-#include "..\time\Timer.h"
 
 
 using namespace DirectX;
 using std::vector;
 using std::wstring;
-
-using time::Timer;
-
-namespace scb
-{
-	class SchemeServer;
-	class Timer;
-}
-
-namespace graphics
-{
-	class GraphicsServer;
-}
 
 namespace application
 {
@@ -68,8 +54,6 @@ namespace application
 		Application();
 
 		static Application* instance;
-
-		time::Timer timer;
 
 		HWND hwnd;
 		unsigned int mainWindowHeight;

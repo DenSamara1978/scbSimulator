@@ -1,9 +1,7 @@
 #include "PultTabloCommutatorKmt.h"
+#include "AbstractScheme.h"
 
 using namespace scb;
-
-using time::Timer;
-
 
 PultTabloCommutatorKmt::PultTabloCommutatorKmt(AbstractScheme* ownerScheme, Color color, int leftPositionOnBit, int leftPositionOffBit, int rightPositionOnBit, int rightPositionOffBit) :
 	PultTabloAbstractCommutator(ownerScheme, color, leftPositionOnBit, leftPositionOffBit, rightPositionOnBit, rightPositionOffBit)
@@ -39,7 +37,7 @@ void PultTabloCommutatorKmt::turnCw()
 		case 0:
 			// Начать поворот направо от центра
 			if (this->timeStamp == 0)
-				this->timeStamp = Timer::getInstance()->getWorkingTime();
+				this->timeStamp = this->getWorkingTime();
 			this->switchStatus = 4;
 			this->addIdleTimer();
 			break;
@@ -50,7 +48,7 @@ void PultTabloCommutatorKmt::turnCw()
 		case 2:
 			// Начать поворот направо от левого
 			if (this->timeStamp == 0)
-				this->timeStamp = Timer::getInstance()->getWorkingTime();
+				this->timeStamp = this->getWorkingTime();
 			this->switchStatus = 3;
 			this->addIdleTimer();
 			break;
@@ -68,7 +66,7 @@ void PultTabloCommutatorKmt::turnCcw()
 		case 0:
 			// Начать поворот налево от центра
 			if (this->timeStamp == 0)
-				this->timeStamp = Timer::getInstance()->getWorkingTime();
+				this->timeStamp = this->getWorkingTime();
 			this->switchStatus = 1;
 			this->addIdleTimer();
 			break;
@@ -83,7 +81,7 @@ void PultTabloCommutatorKmt::turnCcw()
 		case 5:
 			// Начать поворот налево от правого
 			if (this->timeStamp == 0)
-				this->timeStamp = Timer::getInstance()->getWorkingTime();
+				this->timeStamp = this->getWorkingTime();
 			this->switchStatus = 6;
 			this->addIdleTimer();
 			break;

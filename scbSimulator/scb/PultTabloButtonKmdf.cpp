@@ -3,9 +3,6 @@
 
 using namespace scb;
 
-using time::Timer;
-
-
 PultTabloButtonKmdf::PultTabloButtonKmdf(AbstractScheme* ownerScheme, Color color, int onBit) :
 	PultTabloAbstractButton(ownerScheme, color, onBit)
 {
@@ -34,7 +31,7 @@ void PultTabloButtonKmdf::press()
 		case 0:
 		case 4:
 			// инициировать нажатие
-			this->timeStamp = Timer::getInstance()->getWorkingTime();
+			this->timeStamp = this->getWorkingTime();
 			this->status++;
 			this->addIdleTimer();
 			break;
@@ -64,7 +61,7 @@ void PultTabloButtonKmdf::release()
 		case 2:
 		case 6:
 			// инициировать отпускание
-			this->timeStamp = Timer::getInstance()->getWorkingTime();
+			this->timeStamp = this->getWorkingTime();
 			this->status++;
 			this->addIdleTimer();
 			break;
