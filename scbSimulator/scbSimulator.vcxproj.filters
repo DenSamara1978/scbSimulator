@@ -37,6 +37,21 @@
     <Filter Include="Файлы заголовков\track">
       <UniqueIdentifier>{b19459d4-c3b2-4c06-be19-47c6e10848a6}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Файлы заголовков\util">
+      <UniqueIdentifier>{822c7181-116d-4b79-8be7-5cc765fde97c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Файлы заголовков\application">
+      <UniqueIdentifier>{c974ffc3-ae8e-4fe2-8f80-9239a8ccc8e6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Исходные файлы\application">
+      <UniqueIdentifier>{8f422c94-cac5-4414-b7b7-be69ee814444}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Файлы заголовков\time">
+      <UniqueIdentifier>{d85816a5-344d-4877-8b1b-5a6b6baa68b8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Исходные файлы\time">
+      <UniqueIdentifier>{05ef51b5-ff5f-46b2-81a7-f2f01ff568f4}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
@@ -51,167 +66,176 @@
     <ClInclude Include="scbSimulator.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
-    <ClInclude Include="scb\scbRelay.h">
+    <ClInclude Include="scb\AbstractScheme.h">
       <Filter>Файлы заголовков\scb</Filter>
     </ClInclude>
-    <ClInclude Include="scb\scbTimer.h">
+    <ClInclude Include="scb\AbstractSchemeDevice.h">
       <Filter>Файлы заголовков\scb</Filter>
     </ClInclude>
-    <ClInclude Include="scb\scbNeutralRelay.h">
+    <ClInclude Include="scb\SchemeOutput.h">
       <Filter>Файлы заголовков\scb</Filter>
     </ClInclude>
-    <ClInclude Include="scb\scbPolarRelay.h">
-      <Filter>Файлы заголовков\scb</Filter>
-    </ClInclude>
-    <ClInclude Include="scb\scbPultTablo.h">
-      <Filter>Файлы заголовков\scb</Filter>
-    </ClInclude>
-    <ClInclude Include="scb\scbLightSignal.h">
-      <Filter>Файлы заголовков\scb</Filter>
-    </ClInclude>
-    <ClInclude Include="scb\scbPultTabloAbstractButton.h">
-      <Filter>Файлы заголовков\scb</Filter>
-    </ClInclude>
-    <ClInclude Include="scb\scbPultTabloButtonKmd.h">
-      <Filter>Файлы заголовков\scb</Filter>
-    </ClInclude>
-    <ClInclude Include="scb\scbPultTabloButtonKmdf.h">
-      <Filter>Файлы заголовков\scb</Filter>
-    </ClInclude>
-    <ClInclude Include="scb\scbPultTabloAbstractCommutator.h">
-      <Filter>Файлы заголовков\scb</Filter>
-    </ClInclude>
-    <ClInclude Include="scb\scbPultTabloCommutatorKmt.h">
-      <Filter>Файлы заголовков\scb</Filter>
-    </ClInclude>
-    <ClInclude Include="scb\scbPultTabloButtonSchm1m.h">
-      <Filter>Файлы заголовков\scb</Filter>
-    </ClInclude>
-    <ClInclude Include="scb\scbLightSignalLamp.h">
-      <Filter>Файлы заголовков\scb</Filter>
-    </ClInclude>
-    <ClInclude Include="scb\scbPultTabloBell.h">
-      <Filter>Файлы заголовков\scb</Filter>
-    </ClInclude>
-    <ClInclude Include="scb\scbPultTabloLampGroup.h">
-      <Filter>Файлы заголовков\scb</Filter>
-    </ClInclude>
-    <ClInclude Include="scb\scbPultTabloAmpermeter.h">
-      <Filter>Файлы заголовков\scb</Filter>
-    </ClInclude>
-    <ClInclude Include="scb\scbPultTabloCommutatorKmd.h">
-      <Filter>Файлы заголовков\scb</Filter>
-    </ClInclude>
-    <ClInclude Include="genApplication.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="visual\visualLightSignal.h">
+    <ClInclude Include="visual\VisualAbstract.h">
       <Filter>Файлы заголовков\visual</Filter>
     </ClInclude>
-    <ClInclude Include="visual\visualAbstract.h">
+    <ClInclude Include="graphics\GraphicsServer.h">
+      <Filter>Файлы заголовков\graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="graphics\Camera.h">
+      <Filter>Файлы заголовков\graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="graphics\IndexBuffer.h">
+      <Filter>Файлы заголовков\graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="graphics\VertexDeclaration.h">
+      <Filter>Файлы заголовков\graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="graphics\VertexBuffer.h">
+      <Filter>Файлы заголовков\graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="graphics\Shader.h">
+      <Filter>Файлы заголовков\graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="graphics\VertexShader.h">
+      <Filter>Файлы заголовков\graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="graphics\PixelShader.h">
+      <Filter>Файлы заголовков\graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="visual\LightSignal.h">
       <Filter>Файлы заголовков\visual</Filter>
     </ClInclude>
-    <ClInclude Include="graphics\graphPixelShader.h">
-      <Filter>Файлы заголовков\graphics</Filter>
-    </ClInclude>
-    <ClInclude Include="graphics\graphVertexShader.h">
-      <Filter>Файлы заголовков\graphics</Filter>
-    </ClInclude>
-    <ClInclude Include="graphics\graphServer.h">
-      <Filter>Файлы заголовков\graphics</Filter>
-    </ClInclude>
-    <ClInclude Include="graphics\graphVertexBuffer.h">
-      <Filter>Файлы заголовков\graphics</Filter>
-    </ClInclude>
-    <ClInclude Include="graphics\graphIndexBuffer.h">
-      <Filter>Файлы заголовков\graphics</Filter>
-    </ClInclude>
-    <ClInclude Include="graphics\graphCamera.h">
-      <Filter>Файлы заголовков\graphics</Filter>
-    </ClInclude>
-    <ClInclude Include="graphics\graphVertexDeclaration.h">
-      <Filter>Файлы заголовков\graphics</Filter>
-    </ClInclude>
-    <ClInclude Include="visual\visualPultTabloButton.h">
+    <ClInclude Include="visual\MotorDrive.h">
       <Filter>Файлы заголовков\visual</Filter>
     </ClInclude>
-    <ClInclude Include="scb\scbTimerRecord.h">
+    <ClInclude Include="visual\PultTablo.h">
+      <Filter>Файлы заголовков\visual</Filter>
+    </ClInclude>
+    <ClInclude Include="visual\PultTabloButton.h">
+      <Filter>Файлы заголовков\visual</Filter>
+    </ClInclude>
+    <ClInclude Include="visual\PultTabloCommutator.h">
+      <Filter>Файлы заголовков\visual</Filter>
+    </ClInclude>
+    <ClInclude Include="scb\LightSignalLamp.h">
       <Filter>Файлы заголовков\scb</Filter>
     </ClInclude>
-    <ClInclude Include="scb\scbPultTabloActiveDevice.h">
+    <ClInclude Include="util\Color.h">
+      <Filter>Файлы заголовков\util</Filter>
+    </ClInclude>
+    <ClInclude Include="scb\PultTabloLampGroup.h">
       <Filter>Файлы заголовков\scb</Filter>
     </ClInclude>
-    <ClInclude Include="visual\visualPultTabloCommutator.h">
-      <Filter>Файлы заголовков\visual</Filter>
-    </ClInclude>
-    <ClInclude Include="graphics\graphShader.h">
-      <Filter>Файлы заголовков\graphics</Filter>
-    </ClInclude>
-    <ClInclude Include="visual\visualPultTablo.h">
-      <Filter>Файлы заголовков\visual</Filter>
-    </ClInclude>
-    <ClInclude Include="scb\scbMotorDrive.h">
+    <ClInclude Include="scb\PultTabloAbstractButton.h">
       <Filter>Файлы заголовков\scb</Filter>
     </ClInclude>
-    <ClInclude Include="scb\scbMotorDriveDevice.h">
+    <ClInclude Include="scb\PultTabloActiveDevice.h">
       <Filter>Файлы заголовков\scb</Filter>
     </ClInclude>
-    <ClInclude Include="visual\visualMotorDrive.h">
-      <Filter>Файлы заголовков\visual</Filter>
+    <ClInclude Include="scb\PultTabloAbstractCommutator.h">
+      <Filter>Файлы заголовков\scb</Filter>
     </ClInclude>
-    <ClInclude Include="track\trackSwitch.h">
+    <ClInclude Include="scb\MotorDriveDevice.h">
+      <Filter>Файлы заголовков\scb</Filter>
+    </ClInclude>
+    <ClInclude Include="track\Switch.h">
       <Filter>Файлы заголовков\track</Filter>
     </ClInclude>
-    <ClInclude Include="scb\scbBus.h">
+    <ClInclude Include="scb\LightSignalScheme.h">
       <Filter>Файлы заголовков\scb</Filter>
     </ClInclude>
-    <ClInclude Include="scb\scbChain.h">
+    <ClInclude Include="scb\MotorDriveScheme.h">
       <Filter>Файлы заголовков\scb</Filter>
     </ClInclude>
-    <ClInclude Include="scb\scbConnectionPoint.h">
+    <ClInclude Include="scb\PultTabloScheme.h">
       <Filter>Файлы заголовков\scb</Filter>
     </ClInclude>
-    <ClInclude Include="scb\scbAbstractScheme.h">
+    <ClInclude Include="scb\BusScheme.h">
       <Filter>Файлы заголовков\scb</Filter>
     </ClInclude>
-    <ClInclude Include="scb\scbAbstractSchemeDevice.h">
+    <ClInclude Include="scb\ChainScheme.h">
       <Filter>Файлы заголовков\scb</Filter>
     </ClInclude>
-    <ClInclude Include="scb\scbSchemeOutput.h">
+    <ClInclude Include="scb\Scheme.h">
       <Filter>Файлы заголовков\scb</Filter>
     </ClInclude>
-    <ClInclude Include="scb\scbConnectionPointScheme.h">
+    <ClInclude Include="scb\SchemeGpr.h">
       <Filter>Файлы заголовков\scb</Filter>
     </ClInclude>
-    <ClInclude Include="scb\scbScheme.h">
+    <ClInclude Include="scb\SchemeAvx64.h">
       <Filter>Файлы заголовков\scb</Filter>
     </ClInclude>
-    <ClInclude Include="scb\scbSchemeGPR.h">
+    <ClInclude Include="scb\SchemeAvx128.h">
       <Filter>Файлы заголовков\scb</Filter>
     </ClInclude>
-    <ClInclude Include="scb\scbSchemeAVX64.h">
+    <ClInclude Include="scb\SchemeAvx256.h">
       <Filter>Файлы заголовков\scb</Filter>
     </ClInclude>
-    <ClInclude Include="scb\scbSchemeAVX128.h">
+    <ClInclude Include="scb\SchemeSse16.h">
       <Filter>Файлы заголовков\scb</Filter>
     </ClInclude>
-    <ClInclude Include="scb\scbSchemeAVX256.h">
+    <ClInclude Include="scb\SchemeSse32.h">
       <Filter>Файлы заголовков\scb</Filter>
     </ClInclude>
-    <ClInclude Include="scb\scbSchemeSSE16.h">
+    <ClInclude Include="scb\SchemeSse64.h">
       <Filter>Файлы заголовков\scb</Filter>
     </ClInclude>
-    <ClInclude Include="scb\scbSchemeSSE32.h">
+    <ClInclude Include="scb\SchemeSse128.h">
       <Filter>Файлы заголовков\scb</Filter>
     </ClInclude>
-    <ClInclude Include="scb\scbSchemeSSE64.h">
+    <ClInclude Include="scb\SchemeSse256.h">
       <Filter>Файлы заголовков\scb</Filter>
     </ClInclude>
-    <ClInclude Include="scb\scbSchemeSSE128.h">
+    <ClInclude Include="scb\Relay.h">
       <Filter>Файлы заголовков\scb</Filter>
     </ClInclude>
-    <ClInclude Include="scb\scbSchemeSSE256.h">
+    <ClInclude Include="scb\PolarRelay.h">
       <Filter>Файлы заголовков\scb</Filter>
+    </ClInclude>
+    <ClInclude Include="scb\NeutralRelay.h">
+      <Filter>Файлы заголовков\scb</Filter>
+    </ClInclude>
+    <ClInclude Include="scb\PultTabloButtonKmd.h">
+      <Filter>Файлы заголовков\scb</Filter>
+    </ClInclude>
+    <ClInclude Include="scb\PultTabloButtonKmdf.h">
+      <Filter>Файлы заголовков\scb</Filter>
+    </ClInclude>
+    <ClInclude Include="scb\PultTabloButtonSchm1m.h">
+      <Filter>Файлы заголовков\scb</Filter>
+    </ClInclude>
+    <ClInclude Include="scb\PultTabloCommutatorKmd.h">
+      <Filter>Файлы заголовков\scb</Filter>
+    </ClInclude>
+    <ClInclude Include="scb\PultTabloCommutatorKmt.h">
+      <Filter>Файлы заголовков\scb</Filter>
+    </ClInclude>
+    <ClInclude Include="scb\PultTabloAmpermeter.h">
+      <Filter>Файлы заголовков\scb</Filter>
+    </ClInclude>
+    <ClInclude Include="scb\PultTabloBell.h">
+      <Filter>Файлы заголовков\scb</Filter>
+    </ClInclude>
+    <ClInclude Include="scb\ConnectionPoint.h">
+      <Filter>Файлы заголовков\scb</Filter>
+    </ClInclude>
+    <ClInclude Include="scb\ConnectionPointScheme.h">
+      <Filter>Файлы заголовков\scb</Filter>
+    </ClInclude>
+    <ClInclude Include="scb\SchemeServer.h">
+      <Filter>Файлы заголовков\scb</Filter>
+    </ClInclude>
+    <ClInclude Include="util\Range.h">
+      <Filter>Файлы заголовков\util</Filter>
+    </ClInclude>
+    <ClInclude Include="application\Application.h">
+      <Filter>Файлы заголовков\application</Filter>
+    </ClInclude>
+    <ClInclude Include="time\Timer.h">
+      <Filter>Файлы заголовков\time</Filter>
+    </ClInclude>
+    <ClInclude Include="time\TimerRecord.h">
+      <Filter>Файлы заголовков\time</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -221,164 +245,167 @@
     <ClCompile Include="scbSimulator.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
-    <ClCompile Include="scb\scbRelay.cpp">
+    <ClCompile Include="scb\AbstractScheme.cpp">
       <Filter>Исходные файлы\scb</Filter>
     </ClCompile>
-    <ClCompile Include="scb\scbTimer.cpp">
+    <ClCompile Include="scb\AbstractSchemeDevice.cpp">
       <Filter>Исходные файлы\scb</Filter>
     </ClCompile>
-    <ClCompile Include="scb\scbNeutralRelay.cpp">
+    <ClCompile Include="scb\SchemeOutput.cpp">
       <Filter>Исходные файлы\scb</Filter>
     </ClCompile>
-    <ClCompile Include="scb\scbPolarRelay.cpp">
-      <Filter>Исходные файлы\scb</Filter>
-    </ClCompile>
-    <ClCompile Include="scb\scbLightSignal.cpp">
-      <Filter>Исходные файлы\scb</Filter>
-    </ClCompile>
-    <ClCompile Include="scb\scbPultTablo.cpp">
-      <Filter>Исходные файлы\scb</Filter>
-    </ClCompile>
-    <ClCompile Include="scb\scbPultTabloAbstractButton.cpp">
-      <Filter>Исходные файлы\scb</Filter>
-    </ClCompile>
-    <ClCompile Include="scb\scbPultTabloButtonKmd.cpp">
-      <Filter>Исходные файлы\scb</Filter>
-    </ClCompile>
-    <ClCompile Include="scb\scbPultTabloButtonKmdf.cpp">
-      <Filter>Исходные файлы\scb</Filter>
-    </ClCompile>
-    <ClCompile Include="scb\scbPultTabloButtonSchm1m.cpp">
-      <Filter>Исходные файлы\scb</Filter>
-    </ClCompile>
-    <ClCompile Include="scb\scbLightSignalLamp.cpp">
-      <Filter>Исходные файлы\scb</Filter>
-    </ClCompile>
-    <ClCompile Include="scb\scbPultTabloBell.cpp">
-      <Filter>Исходные файлы\scb</Filter>
-    </ClCompile>
-    <ClCompile Include="scb\scbPultTabloAmpermeter.cpp">
-      <Filter>Исходные файлы\scb</Filter>
-    </ClCompile>
-    <ClCompile Include="scb\scbPultTabloLampGroup.cpp">
-      <Filter>Исходные файлы\scb</Filter>
-    </ClCompile>
-    <ClCompile Include="genApplication.cpp">
-      <Filter>Исходные файлы</Filter>
-    </ClCompile>
-    <ClCompile Include="visual\visualLightSignal.cpp">
+    <ClCompile Include="visual\VisualAbstract.cpp">
       <Filter>Исходные файлы\visual</Filter>
     </ClCompile>
-    <ClCompile Include="visual\visualAbstract.cpp">
+    <ClCompile Include="graphics\GraphicsServer.cpp">
+      <Filter>Исходные файлы\graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="graphics\Camera.cpp">
+      <Filter>Исходные файлы\graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="graphics\IndexBuffer.cpp">
+      <Filter>Исходные файлы\graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="graphics\VertexDeclaration.cpp">
+      <Filter>Исходные файлы\graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="graphics\VertexBuffer.cpp">
+      <Filter>Исходные файлы\graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="graphics\Shader.cpp">
+      <Filter>Исходные файлы\graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="graphics\VertexShader.cpp">
+      <Filter>Исходные файлы\graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="graphics\PixelShader.cpp">
+      <Filter>Исходные файлы\graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="visual\LightSignal.cpp">
       <Filter>Исходные файлы\visual</Filter>
     </ClCompile>
-    <ClCompile Include="graphics\graphPixelShader.cpp">
-      <Filter>Исходные файлы\graphics</Filter>
-    </ClCompile>
-    <ClCompile Include="graphics\graphVertexShader.cpp">
-      <Filter>Исходные файлы\graphics</Filter>
-    </ClCompile>
-    <ClCompile Include="graphics\graphServer.cpp">
-      <Filter>Исходные файлы\graphics</Filter>
-    </ClCompile>
-    <ClCompile Include="graphics\graphVertexBuffer.cpp">
-      <Filter>Исходные файлы\graphics</Filter>
-    </ClCompile>
-    <ClCompile Include="graphics\graphIndexBuffer.cpp">
-      <Filter>Исходные файлы\graphics</Filter>
-    </ClCompile>
-    <ClCompile Include="graphics\graphCamera.cpp">
-      <Filter>Исходные файлы\graphics</Filter>
-    </ClCompile>
-    <ClCompile Include="graphics\graphVertexDeclaration.cpp">
-      <Filter>Исходные файлы\graphics</Filter>
-    </ClCompile>
-    <ClCompile Include="visual\visualPultTabloButton.cpp">
+    <ClCompile Include="visual\PultTablo.cpp">
       <Filter>Исходные файлы\visual</Filter>
     </ClCompile>
-    <ClCompile Include="scb\scbPultTabloActiveDevice.cpp">
-      <Filter>Исходные файлы\scb</Filter>
-    </ClCompile>
-    <ClCompile Include="scb\scbPultTabloAbstractCommutator.cpp">
-      <Filter>Исходные файлы\scb</Filter>
-    </ClCompile>
-    <ClCompile Include="scb\scbPultTabloCommutatorKmd.cpp">
-      <Filter>Исходные файлы\scb</Filter>
-    </ClCompile>
-    <ClCompile Include="scb\scbPultTabloCommutatorKmt.cpp">
-      <Filter>Исходные файлы\scb</Filter>
-    </ClCompile>
-    <ClCompile Include="visual\visualPultTabloCommutator.cpp">
+    <ClCompile Include="visual\PultTabloButton.cpp">
       <Filter>Исходные файлы\visual</Filter>
     </ClCompile>
-    <ClCompile Include="graphics\graphShader.cpp">
-      <Filter>Исходные файлы\graphics</Filter>
-    </ClCompile>
-    <ClCompile Include="visual\visualPultTablo.cpp">
+    <ClCompile Include="visual\PultTabloCommutator.cpp">
       <Filter>Исходные файлы\visual</Filter>
     </ClCompile>
-    <ClCompile Include="scb\scbMotorDrive.cpp">
-      <Filter>Исходные файлы\scb</Filter>
-    </ClCompile>
-    <ClCompile Include="scb\scbMotorDriveDevice.cpp">
-      <Filter>Исходные файлы\scb</Filter>
-    </ClCompile>
-    <ClCompile Include="visual\visualMotorDrive.cpp">
+    <ClCompile Include="visual\MotorDrive.cpp">
       <Filter>Исходные файлы\visual</Filter>
     </ClCompile>
-    <ClCompile Include="track\trackSwitch.cpp">
+    <ClCompile Include="track\Switch.cpp">
       <Filter>Исходные файлы\track</Filter>
     </ClCompile>
-    <ClCompile Include="scb\scbBus.cpp">
+    <ClCompile Include="scb\LightSignalLamp.cpp">
       <Filter>Исходные файлы\scb</Filter>
     </ClCompile>
-    <ClCompile Include="scb\scbChain.cpp">
+    <ClCompile Include="scb\LightSignalScheme.cpp">
       <Filter>Исходные файлы\scb</Filter>
     </ClCompile>
-    <ClCompile Include="scb\scbConnectionPoint.cpp">
+    <ClCompile Include="scb\MotorDriveScheme.cpp">
       <Filter>Исходные файлы\scb</Filter>
     </ClCompile>
-    <ClCompile Include="scb\scbAbstractScheme.cpp">
+    <ClCompile Include="scb\PultTabloScheme.cpp">
       <Filter>Исходные файлы\scb</Filter>
     </ClCompile>
-    <ClCompile Include="scb\scbAbstractSchemeDevice.cpp">
+    <ClCompile Include="scb\BusScheme.cpp">
       <Filter>Исходные файлы\scb</Filter>
     </ClCompile>
-    <ClCompile Include="scb\scbSchemeOutput.cpp">
+    <ClCompile Include="scb\ChainScheme.cpp">
       <Filter>Исходные файлы\scb</Filter>
     </ClCompile>
-    <ClCompile Include="scb\scbConnectionPointScheme.cpp">
+    <ClCompile Include="scb\Scheme.cpp">
       <Filter>Исходные файлы\scb</Filter>
     </ClCompile>
-    <ClCompile Include="scb\scbScheme.cpp">
+    <ClCompile Include="scb\SchemeAvx64.cpp">
       <Filter>Исходные файлы\scb</Filter>
     </ClCompile>
-    <ClCompile Include="scb\scbSchemeGPR.cpp">
+    <ClCompile Include="scb\SchemeAvx128.cpp">
       <Filter>Исходные файлы\scb</Filter>
     </ClCompile>
-    <ClCompile Include="scb\scbSchemeAVX64.cpp">
+    <ClCompile Include="scb\SchemeAvx256.cpp">
       <Filter>Исходные файлы\scb</Filter>
     </ClCompile>
-    <ClCompile Include="scb\scbSchemeAVX128.cpp">
+    <ClCompile Include="scb\SchemeGpr.cpp">
       <Filter>Исходные файлы\scb</Filter>
     </ClCompile>
-    <ClCompile Include="scb\scbSchemeAVX256.cpp">
+    <ClCompile Include="scb\SchemeSse16.cpp">
       <Filter>Исходные файлы\scb</Filter>
     </ClCompile>
-    <ClCompile Include="scb\scbSchemeSSE16.cpp">
+    <ClCompile Include="scb\SchemeSse32.cpp">
       <Filter>Исходные файлы\scb</Filter>
     </ClCompile>
-    <ClCompile Include="scb\scbSchemeSSE32.cpp">
+    <ClCompile Include="scb\SchemeSse64.cpp">
       <Filter>Исходные файлы\scb</Filter>
     </ClCompile>
-    <ClCompile Include="scb\scbSchemeSSE64.cpp">
+    <ClCompile Include="scb\SchemeSse128.cpp">
       <Filter>Исходные файлы\scb</Filter>
     </ClCompile>
-    <ClCompile Include="scb\scbSchemeSSE128.cpp">
+    <ClCompile Include="scb\SchemeSse256.cpp">
       <Filter>Исходные файлы\scb</Filter>
     </ClCompile>
-    <ClCompile Include="scb\scbSchemeSSE256.cpp">
+    <ClCompile Include="scb\Relay.cpp">
       <Filter>Исходные файлы\scb</Filter>
+    </ClCompile>
+    <ClCompile Include="scb\PolarRelay.cpp">
+      <Filter>Исходные файлы\scb</Filter>
+    </ClCompile>
+    <ClCompile Include="scb\NeutralRelay.cpp">
+      <Filter>Исходные файлы\scb</Filter>
+    </ClCompile>
+    <ClCompile Include="scb\PultTabloAbstractButton.cpp">
+      <Filter>Исходные файлы\scb</Filter>
+    </ClCompile>
+    <ClCompile Include="scb\PultTabloAbstractCommutator.cpp">
+      <Filter>Исходные файлы\scb</Filter>
+    </ClCompile>
+    <ClCompile Include="scb\PultTabloActiveDevice.cpp">
+      <Filter>Исходные файлы\scb</Filter>
+    </ClCompile>
+    <ClCompile Include="scb\PultTabloButtonKmd.cpp">
+      <Filter>Исходные файлы\scb</Filter>
+    </ClCompile>
+    <ClCompile Include="scb\PultTabloButtonKmdf.cpp">
+      <Filter>Исходные файлы\scb</Filter>
+    </ClCompile>
+    <ClCompile Include="scb\PultTabloButtonSchm1m.cpp">
+      <Filter>Исходные файлы\scb</Filter>
+    </ClCompile>
+    <ClCompile Include="scb\PultTabloCommutatorKmd.cpp">
+      <Filter>Исходные файлы\scb</Filter>
+    </ClCompile>
+    <ClCompile Include="scb\PultTabloCommutatorKmt.cpp">
+      <Filter>Исходные файлы\scb</Filter>
+    </ClCompile>
+    <ClCompile Include="scb\PultTabloLampGroup.cpp">
+      <Filter>Исходные файлы\scb</Filter>
+    </ClCompile>
+    <ClCompile Include="scb\PultTabloBell.cpp">
+      <Filter>Исходные файлы\scb</Filter>
+    </ClCompile>
+    <ClCompile Include="scb\PultTabloAmpermeter.cpp">
+      <Filter>Исходные файлы\scb</Filter>
+    </ClCompile>
+    <ClCompile Include="scb\ConnectionPoint.cpp">
+      <Filter>Исходные файлы\scb</Filter>
+    </ClCompile>
+    <ClCompile Include="scb\ConnectionPointScheme.cpp">
+      <Filter>Исходные файлы\scb</Filter>
+    </ClCompile>
+    <ClCompile Include="scb\MotorDriveDevice.cpp">
+      <Filter>Исходные файлы\scb</Filter>
+    </ClCompile>
+    <ClCompile Include="scb\SchemeServer.cpp">
+      <Filter>Исходные файлы\scb</Filter>
+    </ClCompile>
+    <ClCompile Include="application\Application.cpp">
+      <Filter>Исходные файлы\application</Filter>
+    </ClCompile>
+    <ClCompile Include="time\Timer.cpp">
+      <Filter>Исходные файлы\time</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

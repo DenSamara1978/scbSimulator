@@ -1,15 +1,16 @@
 #include "..\stdafx.h"
-#include "visualAbstract.h"
-#include "..\graphics\graphServer.h"
-#include "..\graphics\graphVertexShader.h"
+#include "VisualAbstract.h"
+#include "..\graphics\GraphicsServer.h"
 
-visualAbstract::visualAbstract () :
-	m_IsCompleted ( false )
+using namespace visual;
+
+VisualAbstract::VisualAbstract() :
+	isCompleted(false)
 {
-	this->m_WorldMatrix = XMMatrixIdentity ();
+	this->worldMatrix = XMMatrixIdentity();
 }
 
-visualAbstract::~visualAbstract ()
+VisualAbstract::~VisualAbstract()
 {
 }
 
