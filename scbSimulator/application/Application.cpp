@@ -1,6 +1,7 @@
 #include "..\resource.h"
 #include "Application.h"
 #include "..\time\TimeServer.h"
+#include "..\input\InputServer.h"
 #include "..\visual\PultTablo.h"
 #include "..\visual\PultTabloButton.h"
 #include "..\visual\PultTabloCommutator.h"
@@ -34,6 +35,7 @@ using namespace scb;
 using namespace visual;
 using namespace graphics;
 using namespace time;
+using namespace input;
 
 using application::Application;
 
@@ -68,6 +70,7 @@ void Application::runMessageLoop()
 		else
 		{
 			TimeServer::getInstance()->tick();
+			InputServer::getInstance()->tick();
 			SchemeServer::getInstance()->recalculateSchemes();
 			if (GraphicsServer::getInstance()->render() != S_OK)
 				break;
@@ -628,83 +631,11 @@ LRESULT CALLBACK Application::wndProc(HWND hwnd, UINT message, WPARAM wParam, LP
 					break;
 				case WM_KEYDOWN:
 					scanCode = (lParam >> 16) & 0xff;
-					switch (scanCode)
-					{
-						case 2: // клавиша 1
-							application->action1();
-							break;
-						case 3: // клавиша 2
-							application->action3();
-							break;
-						case 4: // клавиша 3
-							application->action8();
-							break;
-						case 5: // клавиша 4
-							application->action5();
-							break;
-						case 6: // клавиша 5
-							application->action7();
-							break;
-
-						case 0x11: // клавиша W
-							GraphicsServer::getInstance()->getCamera()->moveForward(0.1f);
-							break;
-						case 0x1F: // клавиша S
-							GraphicsServer::getInstance()->getCamera()->moveBackward(0.1f);
-							break;
-						case 0x1E: // клавиша A
-							GraphicsServer::getInstance()->getCamera()->moveLeft(0.1f);
-							break;
-						case 0x20: // клавиша D
-							GraphicsServer::getInstance()->getCamera()->moveRight(0.1f);
-							break;
-						case 0x48: // клавиша Up
-							GraphicsServer::getInstance()->getCamera()->turnUp(10.0f);
-							break;
-						case 0x50: // клавиша Down
-							GraphicsServer::getInstance()->getCamera()->turnDown(10.0f);
-							break;
-						case 0x4B: // клавиша Left
-							GraphicsServer::getInstance()->getCamera()->turnLeft(10.0f);
-							break;
-						case 0x4D: // клавиша Right
-							GraphicsServer::getInstance()->getCamera()->turnRight(10.0f);
-							break;
-
-						case 0x3B: // клавиша F1
-							application->action9();
-							break;
-						case 0x3C: // клавиша F2
-							application->action10();
-							break;
-						case 0x3D: // клавиша F3
-							application->action11();
-							break;
-						case 0x3E: // клавиша F4
-							application->action12();
-							break;
-						case 0x3F: // клавиша F5
-							application->action13();
-							break;
-						case 0x40: // клавиша F6
-							application->action14();
-							break;
-					}
+					InputServer::getInstance()->putKeyDownEvent(scanCode);
 					break;
 				case WM_KEYUP:
 					scanCode = (lParam >> 16) & 0xff;
-					switch (scanCode)
-					{
-						case 2: // клавиша 1
-							application->action2();
-							break;
-						case 3: // клавиша 2
-							application->action4();
-							break;
-						case 5: // клавиша 4
-							application->action6();
-							break;
-					}
+					InputServer::getInstance()->putKeyUpEvent(scanCode);
 					break;
 				case WM_SIZE:
 					width = LOWORD(lParam);

@@ -52,6 +52,12 @@
     <Filter Include="Исходные файлы\time">
       <UniqueIdentifier>{05ef51b5-ff5f-46b2-81a7-f2f01ff568f4}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Файлы заголовков\input">
+      <UniqueIdentifier>{763655eb-9802-495e-a2e3-a9cc1ea615b6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Исходные файлы\input">
+      <UniqueIdentifier>{0621ee55-82e9-48fa-99f1-58fe81c2ade9}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
@@ -243,6 +249,9 @@
     <ClInclude Include="scb\OutputStream.h">
       <Filter>Файлы заголовков\scb</Filter>
     </ClInclude>
+    <ClInclude Include="input\InputServer.h">
+      <Filter>Файлы заголовков\input</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -415,6 +424,9 @@
     </ClCompile>
     <ClCompile Include="time\TimeServer.cpp">
       <Filter>Исходные файлы\time</Filter>
+    </ClCompile>
+    <ClCompile Include="input\InputServer.cpp">
+      <Filter>Исходные файлы\input</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

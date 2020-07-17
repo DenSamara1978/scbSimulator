@@ -164,6 +164,7 @@
     <ClInclude Include="graphics\GraphicsServer.h" />
     <ClInclude Include="graphics\VertexBuffer.h" />
     <ClInclude Include="graphics\VertexShader.h" />
+    <ClInclude Include="input\InputServer.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="scbSimulator.h" />
     <ClInclude Include="scb\AbstractSchemeDevice.h" />
@@ -229,6 +230,7 @@
     <ClCompile Include="graphics\GraphicsServer.cpp" />
     <ClCompile Include="graphics\VertexBuffer.cpp" />
     <ClCompile Include="graphics\VertexShader.cpp" />
+    <ClCompile Include="input\InputServer.cpp" />
     <ClCompile Include="scbSimulator.cpp" />
     <ClCompile Include="scb\AbstractSchemeDevice.cpp" />
     <ClCompile Include="scb\BusScheme.cpp" />

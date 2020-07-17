@@ -18,17 +18,10 @@ namespace graphics
 		void setLookPoint (float x, float y, float z);
 		void setOrientation (float x, float y, float z);
 
-		void turnLeft(float angle);
-		void turnRight(float angle);
-		void turnUp(float angle);
-		void turnDown(float angle);
-		void moveForward(float distance);
-		void moveBackward(float distance);
-		void moveLeft(float distance);
-		void moveRight(float distance);
-
 		XMMATRIX getViewMatrix () const;
 		XMMATRIX getProjectionMatrix () const;
+
+		void moveByInput();
 
 	private:
 		void calculateViewMatrix ();

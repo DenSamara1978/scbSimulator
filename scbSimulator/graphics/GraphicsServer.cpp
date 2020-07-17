@@ -481,6 +481,9 @@ HRESULT GraphicsServer::render()
 	this->immediateContext->ClearRenderTargetView(this->renderTargetView, clearColor);
 	this->immediateContext->ClearDepthStencilView(this->depthStencilView, D3D11_CLEAR_DEPTH, 1.0f, 0);
 
+	if (currentCamera != -1)
+		this->cameras[this->currentCamera]->moveByInput();
+
 	for (auto& visualObject : this->visualObjects)
 		if (visualObject != nullptr)
 			visualObject->render();

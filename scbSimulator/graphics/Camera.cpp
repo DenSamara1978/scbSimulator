@@ -1,5 +1,6 @@
 #include "Camera.h"
 #include "..\application\Application.h"
+#include "..\input\InputServer.h"
 
 using namespace graphics;
 using application::Application;
@@ -38,51 +39,15 @@ void Camera::setOrientation(float x, float y, float z)
 	this->calculateViewMatrix ();
 }
 
-void Camera::turnLeft(float angle)
+void Camera::moveByInput()
 {
-	auto rotationMatrix = XMMatrixRotationY(angle * XM_PI / 180.0f);
-	this->viewMatrix *= rotationMatrix;
+	auto inputServer = input::InputServer::getInstance();
+	float pitch = inputServer->getHorizontalAxisMovement();
+	float yaw = inputServer->getVerticalAxisMovement();
+	auto matrixRotation = XMMatrixRotationRollPitchYaw(pitch, yaw, 0.0f);
+	this->viewMatrix *= matrixRotation;
+	float left = inputServer->getLeftMovement();
+	float forward = inputServer->getForwardMovement();
+	auto matrixTranslation = XMMatrixTranslation(-left, 0.0, forward);
+	this->viewMatrix *= matrixTranslation;
 }
-
-void Camera::turnRight(float angle)
-{
-	auto rotationMatrix = XMMatrixRotationY(-angle * XM_PI / 180.0f);
-	this->viewMatrix *= rotationMatrix;
-}
-
-void Camera::turnUp(float angle)
-{
-	auto rotationMatrix = XMMatrixRotationX(angle * XM_PI / 180.0f);
-	this->viewMatrix *= rotationMatrix;
-}
-
-void Camera::turnDown(float angle)
-{
-	auto rotationMatrix = XMMatrixRotationX(-angle * XM_PI / 180.0f);
-	this->viewMatrix *= rotationMatrix;
-}
-
-void Camera::moveForward(float distance)
-{
-	auto translationMatrix = XMMatrixTranslation(0.0f, 0.0f, -distance);
-	this->viewMatrix *= translationMatrix;
-}
-
-void Camera::moveBackward(float distance)
-{
-	auto translationMatrix = XMMatrixTranslation(0.0f, 0.0f, distance);
-	this->viewMatrix *= translationMatrix;
-}
-
-void Camera::moveLeft(float distance)
-{
-	auto translationMatrix = XMMatrixTranslation(distance, 0.0f, 0.0f);
-	this->viewMatrix *= translationMatrix;
-}
-
-void Camera::moveRight(float distance)
-{
-	auto translationMatrix = XMMatrixTranslation(-distance, 0.0f, 0.0f);
-	this->viewMatrix *= translationMatrix;
-}
-
