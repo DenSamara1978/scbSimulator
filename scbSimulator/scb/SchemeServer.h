@@ -47,6 +47,8 @@ namespace scb
 		void addSchemeToRecalculate(AbstractScheme* scheme);
 		void deleteSchemeToRecalculate(AbstractScheme* scheme);
 
+		void getStatistic();
+
 	private:
 		SchemeServer();
 

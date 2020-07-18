@@ -5,7 +5,18 @@
 #include "Scheme.h"
 #include "BusScheme.h"
 #include "ChainScheme.h"
+#include "SchemeSse16.h"
+#include "SchemeSse32.h"
+#include "SchemeSse64.h"
 #include "SchemeSse128.h"
+#include "SchemeSse256.h"
+#include "SchemeAvx64.h"
+#include "SchemeAvx128.h"
+#include "SchemeAvx256.h"
+#include "SchemeGpr32.h"
+#include "SchemeGpr64.h"
+#include "SchemeGpr128.h"
+#include "SchemeGpr256.h"
 
 using namespace scb;
 
@@ -49,7 +60,7 @@ MotorDriveScheme* SchemeServer::addNewMotorDriveScheme(const wstring& name)
 
 Scheme* SchemeServer::addNewScheme(const wstring& name, int nPrepareCircuits, int nMainCircuits, int nStaticSensitives, int nDynamicSensitives)
 {
-	Scheme* scheme = new SchemeSse128(name, nPrepareCircuits, nMainCircuits, nStaticSensitives, nDynamicSensitives);
+	Scheme* scheme = new SchemeGpr256(name, nPrepareCircuits, nMainCircuits, nStaticSensitives, nDynamicSensitives);
 	this->schemes.push_back(scheme);
 	return scheme;
 }
@@ -121,4 +132,18 @@ void SchemeServer::recalculateSchemes()
 		this->recalculateDeque.front()->recalculate();
 		this->recalculateDeque.pop_front();
 	}
+}
+
+void SchemeServer::getStatistic()
+{
+	unsigned long long countM2, countM3;
+	for (auto& scheme : this->schemes)
+	{
+		if (scheme->isA(L"Светофор.М2.Исполнение"))
+			countM2 = scheme->getAverageWorkingTime();
+		if (scheme->isA(L"Светофор.М3.Исполнение"))
+			countM3 = scheme->getAverageWorkingTime();
+	}
+	countM2;
+	countM3;
 }

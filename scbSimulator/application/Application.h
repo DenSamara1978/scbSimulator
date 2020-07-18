@@ -10,8 +10,6 @@
 #include "..\stdafx.h"
 
 
-using namespace DirectX;
-using std::vector;
 using std::wstring;
 
 namespace application
@@ -28,27 +26,28 @@ namespace application
 		unsigned int getMainWindowWidth() const;
 		unsigned int getMainWindowHeight() const;
 
-		HRESULT initializeWindow (HINSTANCE hInstance, int nCmdShow, const wchar_t* graphics); // Общая инициализация windows-приложения
+		HRESULT initializeWindow(HINSTANCE hInstance, int nCmdShow, const wchar_t* graphics); // Общая инициализация windows-приложения
 
-		void runMessageLoop (); // итерация главного цикла приложения
+		void runMessageLoop(); // итерация главного цикла приложения
 
-		void action1 ();
-		void action2 ();
-		void action3 ();
-		void action4 ();
-		void action5 ();
-		void action6 ();
-		void action7 ();
-		void action8 ();
-		void action9 ();
-		void action10 ();
-		void action11 ();
-		void action12 ();
-		void action13 ();
-		void action14 ();
-		void action15 ();
-		void action16 ();
-		void action17 ();
+		void action1();
+		void action2();
+		void action3();
+		void action4();
+		void action5();
+		void action6();
+		void action7();
+		void action8();
+		void action9();
+		void action10();
+		void action11();
+		void action12();
+		void action13();
+		void action14();
+		void action15();
+		void action16();
+		void action17();
+		void getStatistic();
 
 	private:
 		Application();

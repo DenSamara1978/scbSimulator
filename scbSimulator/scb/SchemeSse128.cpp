@@ -8,9 +8,10 @@ using util::inRange;
 
 SchemeSse128::SchemeSse128(const wstring& name, int nPrepareCircuits, int nMainCircuits, int nStaticSensitives, int nDynamicSensitives) :
 	Scheme(name, nPrepareCircuits, nMainCircuits, nStaticSensitives, nDynamicSensitives),
-	status(_mm_setzero_si128())
+	status(_mm_setzero_si128()),
+	sensitives(_mm_setzero_si128())
 {
-	const size_t size = 16 * 2 * (this->nPrepareCircuits + this->nMainCircuits + this->nStaticSensitives + this->nDynamicSensitives);
+	const size_t size = 16 * 2 * (this->nPrepareCircuits + this->nMainCircuits + this->nStaticSensitives + this->nDynamicSensitives + 1);
 	this->memory = static_cast <__m128i*> (_mm_malloc(size, 16));
 	this->prepareCircuitMasks = this->memory;
 	this->prepareCircuitResults = this->prepareCircuitMasks + this->nPrepareCircuits;
@@ -20,6 +21,8 @@ SchemeSse128::SchemeSse128(const wstring& name, int nPrepareCircuits, int nMainC
 	this->staticSensitiveResults = this->staticSensitiveMasks + this->nStaticSensitives;
 	this->dynamicSensitiveMasks = this->staticSensitiveMasks + this->nStaticSensitives * 2;
 	this->dynamicSensitiveResults = this->dynamicSensitiveMasks + this->nDynamicSensitives;
+	this->dynSensitiveMask = this->dynamicSensitiveMasks + this->nDynamicSensitives * 2;
+	this->constSensitiveMask = this->dynSensitiveMask + 1;
 	memset(this->memory, 0, size);
 }
 
@@ -30,6 +33,12 @@ SchemeSse128::~SchemeSse128()
 		_mm_free(this->memory);
 		this->memory = nullptr;
 	}
+}
+
+void SchemeSse128::setSensitiveMasks(const OutputStream& constMask, const OutputStream& dynMask)
+{
+	this->constSensitiveMask[0] = _mm_load_si128(constMask.sseMask);
+	this->dynSensitiveMask[0] = _mm_load_si128(dynMask.sseMask);
 }
 
 void SchemeSse128::setPrepareCircuit(int index, const OutputStream& mask, const OutputStream& result)
@@ -74,12 +83,15 @@ void SchemeSse128::setDynamicSensitiveCircuit(int index, const OutputStream& mas
 
 void SchemeSse128::recalculate()
 {
+	LARGE_INTEGER startTime, endTime;
+	QueryPerformanceCounter(&startTime);
+
 	int i;
 
 	OutputStream result;
 	static const __m128i zero = _mm_setzero_si128();
-	__m128i mask = this->status;
 	__m128i temp;
+	__m128i mask = this->status;
 
 	const int loop1 = this->nPrepareCircuits;
 	if (loop1 != 0)
@@ -112,6 +124,31 @@ void SchemeSse128::recalculate()
 		device->changeStatus(result);
 
 	this->markRecalculated();
+
+	result.sseMask[0] = this->constSensitiveMask[0];
+
+	const int loop3 = this->nStaticSensitives;
+	for (i = 0; i < loop3; ++i)
+	{
+		temp = _mm_cmpeq_epi32(_mm_andnot_si128(mask, this->staticSensitiveMasks[i]), zero);
+		temp = _mm_and_si128(temp, _mm_shuffle_epi32(temp, _MM_SHUFFLE(2, 3, 0, 1)));
+		temp = _mm_and_si128(temp, _mm_shuffle_epi32(temp, _MM_SHUFFLE(1, 0, 3, 2)));
+		result.sseMask[0] = _mm_or_si128(result.sseMask[0], _mm_and_si128(temp, this->staticSensitiveResults[i]));
+	}
+
+	const int loop4 = this->nDynamicSensitives;
+	for (i = 0; i < loop4; ++i)
+	{
+		temp = _mm_cmpeq_epi32(_mm_andnot_si128(mask, this->dynamicSensitiveMasks[i]), zero);
+		temp = _mm_and_si128(temp, _mm_shuffle_epi32(temp, _MM_SHUFFLE(2, 3, 0, 1)));
+		temp = _mm_and_si128(temp, _mm_shuffle_epi32(temp, _MM_SHUFFLE(1, 0, 3, 2)));
+		result.sseMask[0] = _mm_or_si128(result.sseMask[0], _mm_and_si128(temp, this->dynamicSensitiveResults[i]));
+	}
+
+	this->sensitives = result.sseMask[0];
+
+	QueryPerformanceCounter(&endTime);
+	this->workingTimes.push_back(this->getDiffTime(startTime, endTime));
 }
 
 void SchemeSse128::setStatusBit(int bit)
@@ -139,6 +176,9 @@ void SchemeSse128::correctInputStatus(const OutputStream& maskOn, const OutputSt
 	const __m128i oldStatus = this->status;
 	this->status = _mm_or_si128(_mm_load_si128(maskOn.sseMask), _mm_and_si128(this->status, _mm_load_si128(maskOff.sseMask)));
 
-	if (this->isNotMarkedToRecalculate() && (_mm_movemask_epi8(_mm_cmpeq_epi32(_mm_xor_si128(oldStatus, this->status), _mm_setzero_si128())) != 0xFFFF))
-		this->markToRecalculate();
+	if (this->isNotMarkedToRecalculate())
+	{
+		if (_mm_movemask_epi8(_mm_cmpeq_epi32(_mm_xor_si128(oldStatus, this->status), _mm_setzero_si128())) != 0xFFFF)
+			this->markToRecalculate();
+	}
 }

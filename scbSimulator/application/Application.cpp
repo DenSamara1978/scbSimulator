@@ -18,15 +18,7 @@
 #include "..\scb\PultTabloAbstractButton.h"
 #include "..\scb\BusScheme.h"
 #include "..\scb\ChainScheme.h"
-#include "..\scb\SchemeGpr.h"
-#include "..\scb\SchemeSse16.h"
-#include "..\scb\SchemeSse32.h"
-#include "..\scb\SchemeSse64.h"
-#include "..\scb\SchemeSse128.h"
-#include "..\scb\SchemeSse256.h"
-#include "..\scb\SchemeAvx64.h"
-#include "..\scb\SchemeAvx128.h"
-#include "..\scb\SchemeAvx256.h"
+#include "..\scb\Scheme.h"
 #include "..\scb\SchemeOutput.h"
 #include "..\scb\SchemeServer.h"
 #include "..\track\Switch.h"
@@ -482,6 +474,11 @@ HRESULT Application::initializeWindow(HINSTANCE hInstance, int nCmdShow, const w
 	result = {0x80000000, 0, 0, 0, 0, 0, 0, 0};
 	pScheme->setMainCircuit(26, mask, result);
 
+	// Маски чувствительностей
+	mask = {0, 0, 0, 0, 0, 0, 0, 0};
+	result = {0, 0, 0, 0, 0, 0, 0, 0};
+	pScheme->setSensitiveMasks(mask, result);
+
 	ChainScheme* pChain = schemeServer->addNewChainScheme(L"Шина", 2);
 	pChain->setDeviceCount(1);
 	pChain->setOutput(0, L"Светофор.М2", -1);
@@ -489,7 +486,7 @@ HRESULT Application::initializeWindow(HINSTANCE hInstance, int nCmdShow, const w
 	//	pBus->mapInputOutput ( 0, 0, 17 );
 
 	// Тестовая схема для проверки работоспособности любого типа схем
-	const int stride = 128;
+	const int stride = 32;
 	pScheme = schemeServer->addNewScheme(L"Светофор.М3.Исполнение", 0, stride, 0, 0);
 	pScheme->setDeviceCount(stride);
 
@@ -510,6 +507,11 @@ HRESULT Application::initializeWindow(HINSTANCE hInstance, int nCmdShow, const w
 	result = {1, 0, 0, 0, 0, 0, 0, 0};
 	mask.mask[((stride - 1) & 0xE0) >> 5] = 1L << ((stride - 1) & 0x1F);
 	pScheme->setMainCircuit(stride - 1, mask, result);
+
+	// Маски чувствительностей
+	mask = {0, 0, 0, 0, 0, 0, 0, 0};
+	result = {0, 0, 0, 0, 0, 0, 0, 0};
+	pScheme->setSensitiveMasks(mask, result);
 
 	pScheme->setOutput(stride - 1, L"Светофор.М3");
 	pScheme->mapInputOutput(stride - 1, stride - 1, 30);
@@ -661,4 +663,9 @@ void Application::onResize(UINT width, UINT height)
 {
 	this->mainWindowWidth = width;
 	this->mainWindowHeight = height;
+}
+
+void Application::getStatistic()
+{
+	SchemeServer::getInstance()->getStatistic();
 }

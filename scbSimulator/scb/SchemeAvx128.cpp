@@ -11,9 +11,10 @@ using util::inRange;
 
 SchemeAvx128::SchemeAvx128(const wstring& name, int nPrepareCircuits, int nMainCircuits, int nStaticSensitives, int nDynamicSensitives) :
 	Scheme(name, (nPrepareCircuits + 1) & 0xFFFFFFFE, (nMainCircuits + 1) & 0xFFFFFFFE, (nStaticSensitives + 1) & 0xFFFFFFFE, (nDynamicSensitives + 1) & 0xFFFFFFFE),
-	status(_mm256_setzero_si256())
+	status(_mm256_setzero_si256()),
+	sensitives(_mm256_setzero_si256())
 {
-	const size_t size = 16 * 2 * (this->nPrepareCircuits + this->nMainCircuits + this->nStaticSensitives + this->nDynamicSensitives);
+	const size_t size = 16 * 2 * (this->nPrepareCircuits + this->nMainCircuits + this->nStaticSensitives + this->nDynamicSensitives + 1);
 	this->memory = static_cast <__m256i*> (_mm_malloc(size, 16));
 	this->prepareCircuitMasks = this->memory;
 	this->prepareCircuitResults = this->prepareCircuitMasks + (this->nPrepareCircuits >> 1);
@@ -23,6 +24,8 @@ SchemeAvx128::SchemeAvx128(const wstring& name, int nPrepareCircuits, int nMainC
 	this->staticSensitiveResults = this->staticSensitiveMasks + (this->nStaticSensitives >> 1);
 	this->dynamicSensitiveMasks = this->staticSensitiveMasks + this->nStaticSensitives;
 	this->dynamicSensitiveResults = this->dynamicSensitiveMasks + (this->nDynamicSensitives >> 1);
+	this->dynSensitiveMask = this->dynamicSensitiveMasks + this->nDynamicSensitives;
+	this->constSensitiveMask = this->dynSensitiveMask + 1;
 	memset(this->memory, 0, size);
 }
 
@@ -33,6 +36,14 @@ SchemeAvx128::~SchemeAvx128()
 		_mm_free(this->memory);
 		this->memory = nullptr;
 	}
+}
+
+void SchemeAvx128::setSensitiveMasks(const OutputStream& constMask, const OutputStream& dynMask)
+{
+	this->constSensitiveMask[0].m256i_u64[0] = constMask.avxMask.m256i_u64[0];
+	this->constSensitiveMask[0].m256i_u64[1] = constMask.avxMask.m256i_u64[1];
+	this->dynSensitiveMask[0].m256i_u64[0] = dynMask.avxMask.m256i_u64[0];
+	this->dynSensitiveMask[0].m256i_u64[1] = dynMask.avxMask.m256i_u64[1];
 }
 
 void SchemeAvx128::setPrepareCircuit(int index, const OutputStream& mask, const OutputStream& result)
@@ -97,12 +108,15 @@ void SchemeAvx128::setDynamicSensitiveCircuit(int index, const OutputStream& mas
 
 void SchemeAvx128::recalculate()
 {
+	LARGE_INTEGER startTime, endTime;
+	QueryPerformanceCounter(&startTime);
+
 	int i;
 
 	OutputStream result;
 	static const __m256i zero = _mm256_setzero_si256();
-	__m256i mask = this->status;
 	__m256i temp;
+	__m256i mask = this->status;
 
 	const int loop1 = this->nPrepareCircuits >> 1;
 	if (loop1 != 0)
@@ -135,6 +149,29 @@ void SchemeAvx128::recalculate()
 		device->changeStatus(result);
 
 	this->markRecalculated();
+
+	result.avxMask = this->constSensitiveMask[0];
+
+	const int loop3 = this->nStaticSensitives >> 1;
+	for (i = 0; i < loop3; ++i)
+	{
+		temp = _mm256_cmpeq_epi64(_mm256_andnot_si256(mask, this->staticSensitiveMasks[i]), zero);
+		temp = _mm256_and_si256(temp, _mm256_permute4x64_epi64(temp, _MM_SHUFFLE(2, 3, 0, 1)));
+		result.avxMask = _mm256_or_si256(result.avxMask, _mm256_and_si256(temp, this->staticSensitiveResults[i]));
+	}
+
+	const int loop4 = this->nDynamicSensitives >> 1;
+	for (i = 0; i < loop4; ++i)
+	{
+		temp = _mm256_cmpeq_epi64(_mm256_andnot_si256(mask, this->dynamicSensitiveMasks[i]), zero);
+		temp = _mm256_and_si256(temp, _mm256_permute4x64_epi64(temp, _MM_SHUFFLE(2, 3, 0, 1)));
+		result.avxMask = _mm256_or_si256(result.avxMask, _mm256_and_si256(temp, this->dynamicSensitiveResults[i]));
+	}
+
+	this->sensitives = _mm256_or_si256(result.avxMask, _mm256_permute4x64_epi64(result.avxMask, _MM_SHUFFLE(1, 0, 3, 2)));
+
+	QueryPerformanceCounter(&endTime);
+	this->workingTimes.push_back(this->getDiffTime(startTime, endTime));
 }
 
 void SchemeAvx128::setStatusBit(int bit)
@@ -162,6 +199,9 @@ void SchemeAvx128::correctInputStatus(const OutputStream& maskOn, const OutputSt
 	const __m256i oldStatus = this->status;
 	this->status = _mm256_permute4x64_epi64(_mm256_or_si256(maskOn.avxMask, _mm256_and_si256(this->status, maskOff.avxMask)), _MM_SHUFFLE(1, 0, 1, 0));
 
-	if (this->isNotMarkedToRecalculate() && ((_mm_movemask_epi8(_mm256_castsi256_si128(_mm256_cmpeq_epi64(_mm256_xor_si256(oldStatus, this->status), _mm256_setzero_si256()))) & 0xFFFF) != 0xFFFF))
-		this->markToRecalculate();
+	if (this->isNotMarkedToRecalculate())
+	{
+		if ((_mm_movemask_epi8(_mm256_castsi256_si128(_mm256_cmpeq_epi64(_mm256_xor_si256(oldStatus, this->status), _mm256_setzero_si256()))) & 0xFFFF) != 0xFFFF)
+			this->markToRecalculate();
+	}
 }

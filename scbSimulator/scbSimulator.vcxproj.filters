@@ -165,9 +165,6 @@
     <ClInclude Include="scb\Scheme.h">
       <Filter>Файлы заголовков\scb</Filter>
     </ClInclude>
-    <ClInclude Include="scb\SchemeGpr.h">
-      <Filter>Файлы заголовков\scb</Filter>
-    </ClInclude>
     <ClInclude Include="scb\SchemeAvx64.h">
       <Filter>Файлы заголовков\scb</Filter>
     </ClInclude>
@@ -251,6 +248,18 @@
     </ClInclude>
     <ClInclude Include="input\InputServer.h">
       <Filter>Файлы заголовков\input</Filter>
+    </ClInclude>
+    <ClInclude Include="scb\SchemeGpr128.h">
+      <Filter>Файлы заголовков\scb</Filter>
+    </ClInclude>
+    <ClInclude Include="scb\SchemeGpr256.h">
+      <Filter>Файлы заголовков\scb</Filter>
+    </ClInclude>
+    <ClInclude Include="scb\SchemeGpr64.h">
+      <Filter>Файлы заголовков\scb</Filter>
+    </ClInclude>
+    <ClInclude Include="scb\SchemeGpr32.h">
+      <Filter>Файлы заголовков\scb</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -344,9 +353,6 @@
     <ClCompile Include="scb\SchemeAvx256.cpp">
       <Filter>Исходные файлы\scb</Filter>
     </ClCompile>
-    <ClCompile Include="scb\SchemeGpr.cpp">
-      <Filter>Исходные файлы\scb</Filter>
-    </ClCompile>
     <ClCompile Include="scb\SchemeSse16.cpp">
       <Filter>Исходные файлы\scb</Filter>
     </ClCompile>
@@ -427,6 +433,18 @@
     </ClCompile>
     <ClCompile Include="input\InputServer.cpp">
       <Filter>Исходные файлы\input</Filter>
+    </ClCompile>
+    <ClCompile Include="scb\SchemeGpr128.cpp">
+      <Filter>Исходные файлы\scb</Filter>
+    </ClCompile>
+    <ClCompile Include="scb\SchemeGpr256.cpp">
+      <Filter>Исходные файлы\scb</Filter>
+    </ClCompile>
+    <ClCompile Include="scb\SchemeGpr64.cpp">
+      <Filter>Исходные файлы\scb</Filter>
+    </ClCompile>
+    <ClCompile Include="scb\SchemeGpr32.cpp">
+      <Filter>Исходные файлы\scb</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

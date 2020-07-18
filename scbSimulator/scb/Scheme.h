@@ -10,6 +10,7 @@ namespace scb
 		Scheme(const wstring& name, int nPrepareCircuits, int nMainCircuits, int nStaticSensitives, int nDynamicSensitives);
 		virtual ~Scheme();
 
+		virtual void setSensitiveMasks(const OutputStream& constMask, const OutputStream& dynMask) abstract;
 		virtual void setPrepareCircuit(int index, const OutputStream& mask, const OutputStream& result) abstract;
 		virtual void setMainCircuit(int index, const OutputStream& mask, const OutputStream& result) abstract;
 		virtual void setStaticSensitiveCircuit(int index, const OutputStream& mask, const OutputStream& result) abstract;

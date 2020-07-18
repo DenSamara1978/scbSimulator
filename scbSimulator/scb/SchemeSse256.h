@@ -12,6 +12,7 @@ namespace scb
 		SchemeSse256(const wstring& name, int nPrepareCircuits, int nMainCircuits, int nStaticSensitives, int nDynamicSensitives);
 		virtual ~SchemeSse256() override;
 
+		virtual void setSensitiveMasks(const OutputStream& constMask, const OutputStream& dynMask) override;
 		virtual void setPrepareCircuit(int index, const OutputStream& mask, const OutputStream& result) override;
 		virtual void setMainCircuit(int index, const OutputStream& mask, const OutputStream& result) override;
 		virtual void setStaticSensitiveCircuit(int index, const OutputStream& mask, const OutputStream& result) override;
@@ -24,8 +25,12 @@ namespace scb
 
 	private:
 		__m128i status[2]; // Слово состояния схемы
+		__m128i sensitives[2]; // Слово чувствительности схемы
 
 		__m128i* memory; // Массив бинарных данных
+
+		__m128i* constSensitiveMask; // Маска постоянно чувствительных входов
+		__m128i* dynSensitiveMask; // Маска динамически влияющих входов
 
 		__m128i* prepareCircuitMasks; // Массив предварительных схемных масок
 		__m128i* prepareCircuitResults; // Массив предварительных схемных результатов

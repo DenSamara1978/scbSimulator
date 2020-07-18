@@ -52,6 +52,8 @@ void AbstractScheme::mapInputOutput ( int outputIndex, int inputBit, int outputB
 void AbstractScheme::markToRecalculate()
 {
 	if (!this->markedToRecalculate)
+	{
 		SchemeServer::getInstance()->addSchemeToRecalculate(this);
-	this->markedToRecalculate = true;
+		this->markedToRecalculate = true;
+	}
 }

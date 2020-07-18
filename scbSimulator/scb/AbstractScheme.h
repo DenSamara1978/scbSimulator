@@ -3,6 +3,7 @@
 #include <vector>
 #include <string>
 #include "OutputStream.h"
+#include <Windows.h>
 
 using std::wstring;
 using std::vector;
@@ -19,6 +20,7 @@ namespace scb
 		virtual ~AbstractScheme();
 
 		bool isA(const wstring& name) const;
+		wstring getName() const;
 
 		void setDeviceCount(int count);
 		int getDeviceCount() const;
@@ -34,12 +36,17 @@ namespace scb
 
 		void markToRecalculate();
 
+		unsigned long long getAverageWorkingTime() const;
+
 	protected:
 		// Устройства, принадлежащие этой схеме
 		vector<AbstractSchemeDevice*> devices;
 
 		void markRecalculated();
 		bool isNotMarkedToRecalculate() const;
+
+		unsigned long long getDiffTime(const LARGE_INTEGER& start, const LARGE_INTEGER& end) const;
+		vector<unsigned long long> workingTimes;
 
 	private:
 		wstring name;
@@ -55,6 +62,11 @@ namespace scb
 	inline bool AbstractScheme::isA(const wstring& name) const
 	{
 		return this->name == name;
+	}
+
+	inline wstring AbstractScheme::getName() const
+	{
+		return this->name;
 	}
 
 	inline int AbstractScheme::getDeviceCount() const
@@ -75,6 +87,24 @@ namespace scb
 	inline bool AbstractScheme::isNotMarkedToRecalculate() const
 	{
 		return !this->markedToRecalculate;
+	}
+
+
+	inline unsigned long long AbstractScheme::getDiffTime(const LARGE_INTEGER& start, const LARGE_INTEGER& end) const
+	{
+		return end.QuadPart - start.QuadPart;
+	}
+
+	inline unsigned long long AbstractScheme::getAverageWorkingTime() const
+	{
+		int count = 0;
+		unsigned long long generalTime = 0L;
+		for (auto& time : this->workingTimes)
+		{
+			++count;
+			generalTime += time;
+		}
+		return (count != 0 ) ? generalTime / count : 0;
 	}
 
 }

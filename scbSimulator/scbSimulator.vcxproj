@@ -197,7 +197,10 @@
     <ClInclude Include="scb\SchemeAvx128.h" />
     <ClInclude Include="scb\SchemeAvx256.h" />
     <ClInclude Include="scb\SchemeAvx64.h" />
-    <ClInclude Include="scb\SchemeGpr.h" />
+    <ClInclude Include="scb\SchemeGpr128.h" />
+    <ClInclude Include="scb\SchemeGpr256.h" />
+    <ClInclude Include="scb\SchemeGpr32.h" />
+    <ClInclude Include="scb\SchemeGpr64.h" />
     <ClInclude Include="scb\SchemeOutput.h" />
     <ClInclude Include="scb\SchemeServer.h" />
     <ClInclude Include="scb\SchemeSse128.h" />
@@ -261,7 +264,10 @@
     <ClCompile Include="scb\SchemeAvx128.cpp" />
     <ClCompile Include="scb\SchemeAvx256.cpp" />
     <ClCompile Include="scb\SchemeAvx64.cpp" />
-    <ClCompile Include="scb\SchemeGpr.cpp" />
+    <ClCompile Include="scb\SchemeGpr128.cpp" />
+    <ClCompile Include="scb\SchemeGpr256.cpp" />
+    <ClCompile Include="scb\SchemeGpr32.cpp" />
+    <ClCompile Include="scb\SchemeGpr64.cpp" />
     <ClCompile Include="scb\SchemeOutput.cpp" />
     <ClCompile Include="scb\SchemeServer.cpp" />
     <ClCompile Include="scb\SchemeSse128.cpp" />

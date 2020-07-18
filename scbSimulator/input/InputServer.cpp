@@ -2,6 +2,8 @@
 #include "..\application\Application.h"
 #include "..\time\TimeServer.h"
 
+constexpr float pi = 3.14159265358979323846f;
+
 using namespace input;
 
 InputServer* InputServer::instance = nullptr;
@@ -32,8 +34,8 @@ void InputServer::tick()
 
 	this->forwardMovement = 4.0f * this->deltaTime * this->forwardVelocity;
 	this->leftMovement = 4.0f * this->deltaTime * this->leftVelocity;
-	this->horizontalAxisMovement = 10.0f * XM_PI / 180.0f * this->deltaTime * this->horizontalAxisVelocity;
-	this->verticalAxisMovement = 10.0f * XM_PI / 180.0f * this->deltaTime * this->verticalAxisVelocity;
+	this->horizontalAxisMovement = 10.0f * pi / 180.0f * this->deltaTime * this->horizontalAxisVelocity;
+	this->verticalAxisMovement = 10.0f * pi / 180.0f * this->deltaTime * this->verticalAxisVelocity;
 }
 
 void InputServer::putKeyDownEvent(unsigned int scanCode)
@@ -99,6 +101,9 @@ void InputServer::putKeyDownEvent(unsigned int scanCode)
 			break;
 		case 0x40: // клавиша F6
 			application->action14();
+			break;
+		case 0x41: // клавиша F7
+			application->getStatistic();
 			break;
 	}
 }

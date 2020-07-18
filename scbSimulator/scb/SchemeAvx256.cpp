@@ -10,9 +10,10 @@ using util::inRange;
 
 SchemeAvx256::SchemeAvx256(const wstring& name, int nPrepareCircuits, int nMainCircuits, int nStaticSensitives, int nDynamicSensitives) :
 	Scheme(name, nPrepareCircuits, nMainCircuits, nStaticSensitives, nDynamicSensitives),
-	status(_mm256_setzero_si256())
+	status(_mm256_setzero_si256()),
+	sensitives(_mm256_setzero_si256())
 {
-	const size_t size = 32 * 2 * (this->nPrepareCircuits + this->nMainCircuits + this->nStaticSensitives + this->nDynamicSensitives);
+	const size_t size = 32 * 2 * (this->nPrepareCircuits + this->nMainCircuits + this->nStaticSensitives + this->nDynamicSensitives + 1);
 	this->memory = static_cast <__m256i*> (_mm_malloc(size, 16));
 	this->prepareCircuitMasks = this->memory;
 	this->prepareCircuitResults = this->prepareCircuitMasks + this->nPrepareCircuits;
@@ -22,6 +23,8 @@ SchemeAvx256::SchemeAvx256(const wstring& name, int nPrepareCircuits, int nMainC
 	this->staticSensitiveResults = this->staticSensitiveMasks + this->nStaticSensitives;
 	this->dynamicSensitiveMasks = this->staticSensitiveMasks + this->nStaticSensitives * 2;
 	this->dynamicSensitiveResults = this->dynamicSensitiveMasks + this->nDynamicSensitives;
+	this->dynSensitiveMask = this->dynamicSensitiveMasks + this->nDynamicSensitives * 2;
+	this->constSensitiveMask = this->dynSensitiveMask + 1;
 	memset(this->memory, 0, size);
 }
 
@@ -32,6 +35,12 @@ SchemeAvx256::~SchemeAvx256()
 		_mm_free(this->memory);
 		this->memory = nullptr;
 	}
+}
+
+void SchemeAvx256::setSensitiveMasks(const OutputStream& constMask, const OutputStream& dynMask)
+{
+	this->constSensitiveMask[0] = constMask.avxMask;
+	this->dynSensitiveMask[0] = dynMask.avxMask;
 }
 
 void SchemeAvx256::setPrepareCircuit(int index, const OutputStream& mask, const OutputStream& result)
@@ -76,12 +85,15 @@ void SchemeAvx256::setDynamicSensitiveCircuit(int index, const OutputStream& mas
 
 void SchemeAvx256::recalculate()
 {
+	LARGE_INTEGER startTime, endTime;
+	QueryPerformanceCounter(&startTime);
+
 	int i;
 
 	OutputStream result;
 	static const __m256i zero = _mm256_setzero_si256();
-	__m256i mask = this->status;
 	__m256i temp;
+	__m256i mask = this->status;
 
 	const int loop1 = this->nPrepareCircuits;
 	if (loop1 != 0)
@@ -114,6 +126,31 @@ void SchemeAvx256::recalculate()
 		device->changeStatus(result);
 
 	this->markRecalculated();
+
+	result.avxMask = this->constSensitiveMask[0];
+
+	const int loop3 = this->nStaticSensitives;
+	for (i = 0; i < loop3; ++i)
+	{
+		temp = _mm256_cmpeq_epi64(_mm256_andnot_si256(mask, this->staticSensitiveMasks[i]), zero);
+		temp = _mm256_and_si256(temp, _mm256_permute4x64_epi64(temp, _MM_SHUFFLE(2, 3, 0, 1)));
+		temp = _mm256_and_si256(temp, _mm256_permute4x64_epi64(temp, _MM_SHUFFLE(1, 0, 3, 2)));
+		result.avxMask = _mm256_or_si256(result.avxMask, _mm256_and_si256(temp, this->staticSensitiveResults[i]));
+	}
+
+	const int loop4 = this->nDynamicSensitives;
+	for (i = 0; i < loop4; ++i)
+	{
+		temp = _mm256_cmpeq_epi64(_mm256_andnot_si256(mask, this->dynamicSensitiveMasks[i]), zero);
+		temp = _mm256_and_si256(temp, _mm256_permute4x64_epi64(temp, _MM_SHUFFLE(2, 3, 0, 1)));
+		temp = _mm256_and_si256(temp, _mm256_permute4x64_epi64(temp, _MM_SHUFFLE(1, 0, 3, 2)));
+		result.avxMask = _mm256_or_si256(result.avxMask, _mm256_and_si256(temp, this->dynamicSensitiveResults[i]));
+	}
+
+	this->sensitives = result.avxMask;
+
+	QueryPerformanceCounter(&endTime);
+	this->workingTimes.push_back(this->getDiffTime(startTime, endTime));
 }
 
 void SchemeAvx256::setStatusBit(int bit)
