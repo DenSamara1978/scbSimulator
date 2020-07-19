@@ -105,49 +105,50 @@ void SchemeSse16::recalculate()
 	__m128i temp;
 	__m128i mask = this->status;
 
-	const int loop1 = this->nPrepareCircuits >> 3;
-	if (loop1 != 0)
+	if (this->isMarkedToFullRecalculating())
 	{
+		const int loop1 = this->nPrepareCircuits >> 3;
+		if (loop1 != 0)
+		{
+			result.sseMask[0] = _mm_setzero_si128();
+
+			for (i = 0; i < loop1; ++i)
+			{
+				temp = _mm_cmpeq_epi16(_mm_andnot_si128(mask, this->prepareCircuitMasks[i]), zero);
+				result.sseMask[0] = _mm_or_si128(result.sseMask[0], _mm_and_si128(temp, this->prepareCircuitResults[i]));
+			}
+
+			temp = _mm_or_si128(result.sseMask[0], _mm_shufflehi_epi16(_mm_shufflelo_epi16(result.sseMask[0], _MM_SHUFFLE(2, 3, 0, 1)), _MM_SHUFFLE(2, 3, 0, 1)));
+			result.sseMask[0] = _mm_or_si128(temp, _mm_shuffle_epi32(temp, _MM_SHUFFLE(2, 3, 0, 1)));
+			result.sseMask[0] = _mm_or_si128(result.sseMask[0], _mm_shuffle_epi32(result.sseMask[0], _MM_SHUFFLE(1, 0, 3, 2)));
+			mask = _mm_or_si128(mask, result.sseMask[0]);
+		}
+
 		result.sseMask[0] = _mm_setzero_si128();
 
-		for (i = 0; i < loop1; ++i)
+		const int loop2 = this->nMainCircuits >> 3;
+		for (i = 0; i < loop2; ++i)
 		{
-			temp = _mm_cmpeq_epi16(_mm_andnot_si128(mask, this->prepareCircuitMasks[i]), zero);
-			result.sseMask[0] = _mm_or_si128(result.sseMask[0], _mm_and_si128(temp, this->prepareCircuitResults[i]));
+			temp = _mm_cmpeq_epi16(_mm_andnot_si128(mask, this->mainCircuitMasks[i]), zero);
+			result.sseMask[0] = _mm_or_si128(result.sseMask[0], _mm_and_si128(temp, this->mainCircuitResults[i]));
 		}
 
 		temp = _mm_or_si128(result.sseMask[0], _mm_shufflehi_epi16(_mm_shufflelo_epi16(result.sseMask[0], _MM_SHUFFLE(2, 3, 0, 1)), _MM_SHUFFLE(2, 3, 0, 1)));
 		result.sseMask[0] = _mm_or_si128(temp, _mm_shuffle_epi32(temp, _MM_SHUFFLE(2, 3, 0, 1)));
 		result.sseMask[0] = _mm_or_si128(result.sseMask[0], _mm_shuffle_epi32(result.sseMask[0], _MM_SHUFFLE(1, 0, 3, 2)));
-		mask = _mm_or_si128(mask, result.sseMask[0]);
-	}
+		result.sseMask[1] = _mm_setzero_si128();
 
-	result.sseMask[0] = _mm_setzero_si128();
+		for (const auto& device : this->devices)
+			device->changeStatus(result);
 
-	const int loop2 = this->nMainCircuits >> 3;
-	for (i = 0; i < loop2; ++i)
-	{
-		temp = _mm_cmpeq_epi16(_mm_andnot_si128(mask, this->mainCircuitMasks[i]), zero);
-		result.sseMask[0] = _mm_or_si128(result.sseMask[0], _mm_and_si128(temp, this->mainCircuitResults[i]));
-	}
+		result.sseMask[0] = this->constSensitiveMask[0];
 
-	temp = _mm_or_si128(result.sseMask[0], _mm_shufflehi_epi16(_mm_shufflelo_epi16(result.sseMask[0], _MM_SHUFFLE(2, 3, 0, 1)), _MM_SHUFFLE(2, 3, 0, 1)));
-	result.sseMask[0] = _mm_or_si128(temp, _mm_shuffle_epi32(temp, _MM_SHUFFLE(2, 3, 0, 1)));
-	result.sseMask[0] = _mm_or_si128(result.sseMask[0], _mm_shuffle_epi32(result.sseMask[0], _MM_SHUFFLE(1, 0, 3, 2)));
-	result.sseMask[1] = _mm_setzero_si128();
-
-	for (const auto& device : this->devices)
-		device->changeStatus(result);
-
-	this->markRecalculated();
-
-	result.sseMask[0] = this->constSensitiveMask[0];
-
-	const int loop3 = this->nStaticSensitives >> 3;
-	for (i = 0; i < loop3; ++i)
-	{
-		temp = _mm_cmpeq_epi16(_mm_andnot_si128(mask, this->staticSensitiveMasks[i]), zero);
-		result.sseMask[0] = _mm_or_si128(result.sseMask[0], _mm_and_si128(temp, this->staticSensitiveResults[i]));
+		const int loop3 = this->nStaticSensitives >> 3;
+		for (i = 0; i < loop3; ++i)
+		{
+			temp = _mm_cmpeq_epi16(_mm_andnot_si128(mask, this->staticSensitiveMasks[i]), zero);
+			result.sseMask[0] = _mm_or_si128(result.sseMask[0], _mm_and_si128(temp, this->staticSensitiveResults[i]));
+		}
 	}
 
 	const int loop4 = this->nDynamicSensitives >> 3;
@@ -160,6 +161,7 @@ void SchemeSse16::recalculate()
 	temp = _mm_or_si128(result.sseMask[0], _mm_shufflehi_epi16(_mm_shufflelo_epi16(result.sseMask[0], _MM_SHUFFLE(2, 3, 0, 1)), _MM_SHUFFLE(2, 3, 0, 1)));
 	result.sseMask[0] = _mm_or_si128(temp, _mm_shuffle_epi32(temp, _MM_SHUFFLE(2, 3, 0, 1)));
 	this->sensitives = _mm_or_si128(result.sseMask[0], _mm_shuffle_epi32(result.sseMask[0], _MM_SHUFFLE(1, 0, 3, 2)));
+	this->markRecalculated();
 
 	QueryPerformanceCounter(&endTime);
 	this->workingTimes.push_back(this->getDiffTime(startTime, endTime));
@@ -171,7 +173,7 @@ void SchemeSse16::setStatusBit(int bit)
 	const unsigned long old = ptr[0];
 	ptr[3] = ptr[2] = ptr[1] = (ptr[0] |= (_rotl(1, bit & 0x0F) | _rotl(1, ((bit & 0x0F) + 16))));
 	if (old != ptr[0])
-		this->markToRecalculate();
+		this->markToFullRecalculating();
 }
 
 void SchemeSse16::resetStatusBit(int bit)
@@ -180,7 +182,7 @@ void SchemeSse16::resetStatusBit(int bit)
 	const unsigned long old = ptr[0];
 	ptr[3] = ptr[2] = ptr[1] = (ptr[0] &= ~(_rotl(1, bit & 0x0F) | _rotl(1, ((bit & 0x0F) + 16))));
 	if (old != ptr[0])
-		this->markToRecalculate();
+		this->markToFullRecalculating();
 }
 
 void SchemeSse16::correctInputStatus(const OutputStream& maskOn, const OutputStream& maskOff, int id)
@@ -190,9 +192,9 @@ void SchemeSse16::correctInputStatus(const OutputStream& maskOn, const OutputStr
 	temp = _mm_or_si128(temp, _mm_shufflelo_epi16(temp, _MM_SHUFFLE(2, 3, 0, 1)));
 	this->status = _mm_shuffle_epi32(temp, _MM_SHUFFLE(0, 0, 0, 0));
 
-	if (this->isNotMarkedToRecalculate())
+	if (!this->isMarkedToFullRecalculating())
 	{
 		if (_mm_movemask_epi8(_mm_cmpeq_epi32(_mm_xor_si128(oldStatus, this->status), _mm_setzero_si128())) != 0xFFFF)
-			this->markToRecalculate();
+			this->markToFullRecalculating();
 	}
 }

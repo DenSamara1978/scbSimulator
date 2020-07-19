@@ -92,53 +92,54 @@ void SchemeGpr64::recalculate()
 	unsigned long temp;
 	unsigned long mask[] = {~this->status[0], ~this->status[1]};
 
-	const int loop1 = this->nPrepareCircuits;
-	if (loop1 > 0)
+	if (this->isMarkedToFullRecalculating())
 	{
-		for (i = 0; i < loop1; ++i)
+		const int loop1 = this->nPrepareCircuits;
+		if (loop1 > 0)
 		{
-			temp = (mask[0] & this->prepareCircuitMasks[i * 2]) | (mask[1] & this->prepareCircuitMasks[i * 2 + 1]);
+			for (i = 0; i < loop1; ++i)
+			{
+				temp = (mask[0] & this->prepareCircuitMasks[i * 2]) | (mask[1] & this->prepareCircuitMasks[i * 2 + 1]);
+				if (temp == 0)
+				{
+					result[0] |= this->prepareCircuitResults[i * 2];
+					result[1] |= this->prepareCircuitResults[i * 2 + 1];
+				}
+			}
+
+			mask[0] &= ~result[0];
+			mask[1] &= ~result[1];
+
+			memset(result, 0, 8);
+		}
+
+		const int loop2 = this->nMainCircuits;
+		for (i = 0; i < loop2; ++i)
+		{
+			temp = (mask[0] & this->mainCircuitMasks[i * 2]) | (mask[1] & this->mainCircuitMasks[i * 2 + 1]);
 			if (temp == 0)
 			{
-				result[0] |= this->prepareCircuitResults[i * 2];
-				result[1] |= this->prepareCircuitResults[i * 2 + 1];
+				result[0] |= this->mainCircuitResults[i * 2];
+				result[1] |= this->mainCircuitResults[i * 2 + 1];
 			}
 		}
 
-		mask[0] &= ~result[0];
-		mask[1] &= ~result[1];
+		OutputStream stream;
+		memcpy(&(stream.mask), result, 8);
+		for (const auto& device : this->devices)
+			device->changeStatus(stream);
 
-		memset(result, 0, 8);
-	}
+		memcpy(result, this->constSensitiveMask, 8);
 
-	const int loop2 = this->nMainCircuits;
-	for (i = 0; i < loop2; ++i)
-	{
-		temp = (mask[0] & this->mainCircuitMasks[i * 2]) | (mask[1] & this->mainCircuitMasks[i * 2 + 1]);
-		if (temp == 0)
+		const int loop3 = this->nStaticSensitives;
+		for (i = 0; i < loop3; ++i)
 		{
-			result[0] |= this->mainCircuitResults[i * 2];
-			result[1] |= this->mainCircuitResults[i * 2 + 1];
-		}
-	}
-
-	OutputStream stream;
-	memcpy(&(stream.mask), result, 8);
-	for (const auto& device : this->devices)
-		device->changeStatus(stream);
-
-	this->markRecalculated();
-
-	memcpy(result, this->constSensitiveMask, 8);
-
-	const int loop3 = this->nStaticSensitives;
-	for (i = 0; i < loop3; ++i)
-	{
-		temp = (mask[0] & this->staticSensitiveMasks[i * 2]) | (mask[1] & this->staticSensitiveMasks[i * 2 + 1]);
-		if (temp == 0)
-		{
-			result[0] |= this->staticSensitiveResults[i * 2];
-			result[1] |= this->staticSensitiveResults[i * 2 + 1];
+			temp = (mask[0] & this->staticSensitiveMasks[i * 2]) | (mask[1] & this->staticSensitiveMasks[i * 2 + 1]);
+			if (temp == 0)
+			{
+				result[0] |= this->staticSensitiveResults[i * 2];
+				result[1] |= this->staticSensitiveResults[i * 2 + 1];
+			}
 		}
 	}
 
@@ -154,6 +155,7 @@ void SchemeGpr64::recalculate()
 	}
 
 	memcpy(this->sensitives, result, 8);
+	this->markRecalculated();
 
 	QueryPerformanceCounter(&endTime);
 	this->workingTimes.push_back(this->getDiffTime(startTime, endTime));
@@ -165,7 +167,7 @@ void SchemeGpr64::setStatusBit(int bit)
 	const unsigned long old = this->status[element];
 	this->status[element] |= _rotl(1, bit & 0x1F);
 	if (old != this->status[element])
-		this->markToRecalculate();
+		this->markToFullRecalculating();
 }
 
 void SchemeGpr64::resetStatusBit(int bit)
@@ -174,7 +176,7 @@ void SchemeGpr64::resetStatusBit(int bit)
 	const unsigned long old = this->status[element];
 	this->status[element] &= ~(_rotl(1, bit & 0x1F));
 	if (old != this->status[element])
-		this->markToRecalculate();
+		this->markToFullRecalculating();
 }
 
 void SchemeGpr64::correctInputStatus(const OutputStream& maskOn, const OutputStream& maskOff, int id)
@@ -189,5 +191,5 @@ void SchemeGpr64::correctInputStatus(const OutputStream& maskOn, const OutputStr
 	difference = (oldStatus0 ^ this->status[0]) | (oldStatus1 ^ this->status[1]);
 
 	if (difference != 0)
-		this->markToRecalculate();
+		this->markToFullRecalculating();
 }

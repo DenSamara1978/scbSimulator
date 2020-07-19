@@ -110,60 +110,61 @@ void SchemeSse256::recalculate()
 	static const __m128i zero = _mm_setzero_si128();
 	__m128i mask[2] = { this->status[0], this->status[1] };
 
-	const int loop1 = this->nPrepareCircuits;
-	if (loop1 != 0)
+	if (this->isMarkedToFullRecalculating())
 	{
+		const int loop1 = this->nPrepareCircuits;
+		if (loop1 != 0)
+		{
+			result.sseMask[0] = _mm_setzero_si128();
+			result.sseMask[1] = _mm_setzero_si128();
+
+			for (i = 0; i < loop1; ++i)
+			{
+				cmp1 = _mm_movemask_epi8(_mm_cmpeq_epi32(_mm_andnot_si128(mask[0], this->prepareCircuitMasks[i << 1]), zero));
+				cmp2 = _mm_movemask_epi8(_mm_cmpeq_epi32(_mm_andnot_si128(mask[1], this->prepareCircuitMasks[(i << 1) + 1]), zero));
+				cmp = cmp1 & cmp2;
+				cmp = cmp & (cmp >> 8);
+				cmp = (cmp & (cmp >> 4)) & 1;
+				result.sseMask[0] = _mm_or_si128(result.sseMask[0], this->prepareCircuitResults[(i << 2) + cmp]);
+				result.sseMask[1] = _mm_or_si128(result.sseMask[1], this->prepareCircuitResults[(i << 2) + 2 + cmp]);
+			}
+
+			mask[0] = _mm_or_si128(mask[0], result.sseMask[0]);
+			mask[1] = _mm_or_si128(mask[1], result.sseMask[1]);
+		}
+
 		result.sseMask[0] = _mm_setzero_si128();
 		result.sseMask[1] = _mm_setzero_si128();
 
-		for (i = 0; i < loop1; ++i)
+		const int loop2 = this->nMainCircuits;
+		for (i = 0; i < loop2; ++i)
 		{
-			cmp1 = _mm_movemask_epi8(_mm_cmpeq_epi32(_mm_andnot_si128(mask[0], this->prepareCircuitMasks[i << 1]), zero));
-			cmp2 = _mm_movemask_epi8(_mm_cmpeq_epi32(_mm_andnot_si128(mask[1], this->prepareCircuitMasks[(i << 1) + 1]), zero));
+			cmp1 = _mm_movemask_epi8(_mm_cmpeq_epi32(_mm_andnot_si128(mask[0], this->mainCircuitMasks[i << 1]), zero));
+			cmp2 = _mm_movemask_epi8(_mm_cmpeq_epi32(_mm_andnot_si128(mask[1], this->mainCircuitMasks[(i << 1) + 1]), zero));
 			cmp = cmp1 & cmp2;
 			cmp = cmp & (cmp >> 8);
 			cmp = (cmp & (cmp >> 4)) & 1;
-			result.sseMask[0] = _mm_or_si128(result.sseMask[0], this->prepareCircuitResults[(i << 2) + cmp]);
-			result.sseMask[1] = _mm_or_si128(result.sseMask[1], this->prepareCircuitResults[(i << 2) + 2 + cmp]);
+			result.sseMask[0] = _mm_or_si128(result.sseMask[0], this->mainCircuitResults[(i << 2) + cmp]);
+			result.sseMask[1] = _mm_or_si128(result.sseMask[1], this->mainCircuitResults[(i << 2) + 2 + cmp]);
 		}
 
-		mask[0] = _mm_or_si128(mask[0], result.sseMask[0]);
-		mask[1] = _mm_or_si128(mask[1], result.sseMask[1]);
-	}
+		for (const auto& device : this->devices)
+			device->changeStatus(result);
 
-	result.sseMask[0] = _mm_setzero_si128();
-	result.sseMask[1] = _mm_setzero_si128();
+		result.sseMask[0] = this->constSensitiveMask[0];
+		result.sseMask[1] = this->constSensitiveMask[1];
 
-	const int loop2 = this->nMainCircuits;
-	for (i = 0; i < loop2; ++i)
-	{
-		cmp1 = _mm_movemask_epi8(_mm_cmpeq_epi32(_mm_andnot_si128(mask[0], this->mainCircuitMasks[i << 1]), zero));
-		cmp2 = _mm_movemask_epi8(_mm_cmpeq_epi32(_mm_andnot_si128(mask[1], this->mainCircuitMasks[(i << 1) + 1]), zero));
-		cmp = cmp1 & cmp2;
-		cmp = cmp & (cmp >> 8);
-		cmp = (cmp & (cmp >> 4)) & 1;
-		result.sseMask[0] = _mm_or_si128(result.sseMask[0], this->mainCircuitResults[(i << 2) + cmp]);
-		result.sseMask[1] = _mm_or_si128(result.sseMask[1], this->mainCircuitResults[(i << 2) + 2 + cmp]);
-	}
-
-	for (const auto& device : this->devices)
-		device->changeStatus(result);
-
-	this->markRecalculated();
-
-	result.sseMask[0] = this->constSensitiveMask[0];
-	result.sseMask[1] = this->constSensitiveMask[1];
-
-	const int loop3 = this->nStaticSensitives;
-	for (i = 0; i < loop3; ++i)
-	{
-		cmp1 = _mm_movemask_epi8(_mm_cmpeq_epi32(_mm_andnot_si128(mask[0], this->staticSensitiveMasks[i << 1]), zero));
-		cmp2 = _mm_movemask_epi8(_mm_cmpeq_epi32(_mm_andnot_si128(mask[1], this->staticSensitiveMasks[(i << 1) + 1]), zero));
-		cmp = cmp1 & cmp2;
-		cmp = cmp & (cmp >> 8);
-		cmp = (cmp & (cmp >> 4)) & 1;
-		result.sseMask[0] = _mm_or_si128(result.sseMask[0], this->staticSensitiveResults[(i << 2) + cmp]);
-		result.sseMask[1] = _mm_or_si128(result.sseMask[1], this->staticSensitiveResults[(i << 2) + 2 + cmp]);
+		const int loop3 = this->nStaticSensitives;
+		for (i = 0; i < loop3; ++i)
+		{
+			cmp1 = _mm_movemask_epi8(_mm_cmpeq_epi32(_mm_andnot_si128(mask[0], this->staticSensitiveMasks[i << 1]), zero));
+			cmp2 = _mm_movemask_epi8(_mm_cmpeq_epi32(_mm_andnot_si128(mask[1], this->staticSensitiveMasks[(i << 1) + 1]), zero));
+			cmp = cmp1 & cmp2;
+			cmp = cmp & (cmp >> 8);
+			cmp = (cmp & (cmp >> 4)) & 1;
+			result.sseMask[0] = _mm_or_si128(result.sseMask[0], this->staticSensitiveResults[(i << 2) + cmp]);
+			result.sseMask[1] = _mm_or_si128(result.sseMask[1], this->staticSensitiveResults[(i << 2) + 2 + cmp]);
+		}
 	}
 
 	const int loop4 = this->nDynamicSensitives;
@@ -180,6 +181,7 @@ void SchemeSse256::recalculate()
 
 	this->sensitives[0] = result.sseMask[0];
 	this->sensitives[1] = result.sseMask[1];
+	this->markRecalculated();
 
 	QueryPerformanceCounter(&endTime);
 	this->workingTimes.push_back(this->getDiffTime(startTime, endTime));
@@ -192,7 +194,7 @@ void SchemeSse256::setStatusBit(int bit)
 	const unsigned long old = ptr[element];
 	ptr[element] |= _rotl(1, bit & 0x1F);
 	if (old != ptr[element])
-		this->markToRecalculate();
+		this->markToFullRecalculating();
 }
 
 void SchemeSse256::resetStatusBit(int bit)
@@ -202,7 +204,7 @@ void SchemeSse256::resetStatusBit(int bit)
 	const unsigned long old = ptr[element];
 	ptr[element] &= ~(_rotl(1, bit & 0x1F));
 	if (old != ptr[element])
-		this->markToRecalculate();
+		this->markToFullRecalculating();
 }
 
 void SchemeSse256::correctInputStatus(const OutputStream& maskOn, const OutputStream& maskOff, int id)
@@ -211,9 +213,9 @@ void SchemeSse256::correctInputStatus(const OutputStream& maskOn, const OutputSt
 	this->status[0] = _mm_or_si128(_mm_load_si128(maskOn.sseMask), _mm_and_si128(this->status[0], _mm_load_si128(maskOff.sseMask)));
 	this->status[1] = _mm_or_si128(_mm_load_si128(maskOn.sseMask + 1), _mm_and_si128(this->status[1], _mm_load_si128(maskOff.sseMask + 1)));
 
-	if (this->isNotMarkedToRecalculate())
+	if (!this->isMarkedToFullRecalculating())
 	{
 		if (_mm_movemask_epi8(_mm_cmpeq_epi32(_mm_or_si128(_mm_xor_si128(oldStatus[0], this->status[0]), _mm_xor_si128(oldStatus[1], this->status[1])), _mm_setzero_si128())) != 0xFFFF)
-			this->markToRecalculate();
+			this->markToFullRecalculating();
 	}
 }

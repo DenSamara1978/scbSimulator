@@ -73,5 +73,5 @@ void BusScheme::correctInputStatus(const OutputStream& maskOn, const OutputStrea
 	}
 
 	if (changed)
-		this->markToRecalculate();
+		this->markToFullRecalculating();
 }

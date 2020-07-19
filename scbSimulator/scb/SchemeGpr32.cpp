@@ -91,41 +91,42 @@ void SchemeGpr32::recalculate()
 	unsigned long result = 0;
 	unsigned long mask = ~this->status;
 
-	const int loop1 = this->nPrepareCircuits;
-	if (loop1 > 0)
+	if (this->isMarkedToFullRecalculating())
 	{
-		for (i = 0; i < loop1; ++i)
+		const int loop1 = this->nPrepareCircuits;
+		if (loop1 > 0)
 		{
-			if ((mask & this->prepareCircuitMasks[i]) == 0)
-				result |= this->prepareCircuitResults[i];
+			for (i = 0; i < loop1; ++i)
+			{
+				if ((mask & this->prepareCircuitMasks[i]) == 0)
+					result |= this->prepareCircuitResults[i];
+			}
+
+			mask &= ~result;
+
+			result = 0;
 		}
 
-		mask &= ~result;
+		const int loop2 = this->nMainCircuits;
+		for (i = 0; i < loop2; ++i)
+		{
+			if ((mask & this->mainCircuitMasks[i]) == 0)
+				result |= this->mainCircuitResults[i];
+		}
 
-		result = 0;
-	}
+		OutputStream stream;
+		stream.mask[0] = result;
+		for (const auto& device : this->devices)
+			device->changeStatus(stream);
 
-	const int loop2 = this->nMainCircuits;
-	for (i = 0; i < loop2; ++i)
-	{
-		if ((mask & this->mainCircuitMasks[i]) == 0)
-			result |= this->mainCircuitResults[i];
-	}
+		result = this->constSensitiveMask[0];
 
-	OutputStream stream;
-	stream.mask[0] = result;
-	for (const auto& device : this->devices)
-		device->changeStatus(stream);
-
-	this->markRecalculated();
-
-	result = this->constSensitiveMask[0];
-
-	const int loop3 = this->nStaticSensitives;
-	for (i = 0; i < loop3; ++i)
-	{
-		if ((mask & this->staticSensitiveMasks[i]) == 0)
-			result |= this->staticSensitiveResults[i];
+		const int loop3 = this->nStaticSensitives;
+		for (i = 0; i < loop3; ++i)
+		{
+			if ((mask & this->staticSensitiveMasks[i]) == 0)
+				result |= this->staticSensitiveResults[i];
+		}
 	}
 
 	const int loop4 = this->nDynamicSensitives;
@@ -136,6 +137,7 @@ void SchemeGpr32::recalculate()
 	}
 
 	this->sensitives = result;
+	this->markRecalculated();
 
 	QueryPerformanceCounter(&endTime);
 	this->workingTimes.push_back(this->getDiffTime(startTime, endTime));
@@ -146,7 +148,7 @@ void SchemeGpr32::setStatusBit(int bit)
 	const unsigned long old = this->status;
 	this->status |= _rotl(1, bit & 0x1F);
 	if (old != this->status)
-		this->markToRecalculate();
+		this->markToFullRecalculating();
 }
 
 void SchemeGpr32::resetStatusBit(int bit)
@@ -154,7 +156,7 @@ void SchemeGpr32::resetStatusBit(int bit)
 	const unsigned long old = this->status;
 	this->status &= ~(_rotl(1, bit & 0x1F));
 	if (old != this->status)
-		this->markToRecalculate();
+		this->markToFullRecalculating();
 }
 
 void SchemeGpr32::correctInputStatus(const OutputStream& maskOn, const OutputStream& maskOff, int id)
@@ -165,5 +167,5 @@ void SchemeGpr32::correctInputStatus(const OutputStream& maskOn, const OutputStr
 	this->status = (this->status & maskOff.mask[0]) | maskOn.mask[0];
 
 	if (oldStatus != this->status)
-		this->markToRecalculate();
+		this->markToFullRecalculating();
 }

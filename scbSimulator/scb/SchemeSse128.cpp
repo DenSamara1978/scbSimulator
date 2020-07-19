@@ -93,47 +93,48 @@ void SchemeSse128::recalculate()
 	__m128i temp;
 	__m128i mask = this->status;
 
-	const int loop1 = this->nPrepareCircuits;
-	if (loop1 != 0)
+	if (this->isMarkedToFullRecalculating())
 	{
-		result.sseMask[0] = _mm_setzero_si128();
-
-		for (i = 0; i < loop1; ++i)
+		const int loop1 = this->nPrepareCircuits;
+		if (loop1 != 0)
 		{
-			temp = _mm_cmpeq_epi32(_mm_andnot_si128(mask, this->prepareCircuitMasks[i]), zero);
-			temp = _mm_and_si128(temp, _mm_shuffle_epi32(temp, _MM_SHUFFLE(2, 3, 0, 1)));
-			temp = _mm_and_si128(temp, _mm_shuffle_epi32(temp, _MM_SHUFFLE(1, 0, 3, 2)));
-			result.sseMask[0] = _mm_or_si128(result.sseMask[0], _mm_and_si128(temp, this->prepareCircuitResults[i]));
+			result.sseMask[0] = _mm_setzero_si128();
+
+			for (i = 0; i < loop1; ++i)
+			{
+				temp = _mm_cmpeq_epi32(_mm_andnot_si128(mask, this->prepareCircuitMasks[i]), zero);
+				temp = _mm_and_si128(temp, _mm_shuffle_epi32(temp, _MM_SHUFFLE(2, 3, 0, 1)));
+				temp = _mm_and_si128(temp, _mm_shuffle_epi32(temp, _MM_SHUFFLE(1, 0, 3, 2)));
+				result.sseMask[0] = _mm_or_si128(result.sseMask[0], _mm_and_si128(temp, this->prepareCircuitResults[i]));
+			}
+
+			mask = _mm_or_si128(mask, result.sseMask[0]);
 		}
 
-		mask = _mm_or_si128(mask, result.sseMask[0]);
-	}
+		result.sseMask[0] = _mm_setzero_si128();
 
-	result.sseMask[0] = _mm_setzero_si128();
+		const int loop2 = this->nMainCircuits;
+		for (i = 0; i < loop2; ++i)
+		{
+			temp = _mm_cmpeq_epi32(_mm_andnot_si128(mask, this->mainCircuitMasks[i]), zero);
+			temp = _mm_and_si128(temp, _mm_shuffle_epi32(temp, _MM_SHUFFLE(2, 3, 0, 1)));
+			temp = _mm_and_si128(temp, _mm_shuffle_epi32(temp, _MM_SHUFFLE(1, 0, 3, 2)));
+			result.sseMask[0] = _mm_or_si128(result.sseMask[0], _mm_and_si128(temp, this->mainCircuitResults[i]));
+		}
 
-	const int loop2 = this->nMainCircuits;
-	for (i = 0; i < loop2; ++i)
-	{
-		temp = _mm_cmpeq_epi32(_mm_andnot_si128(mask, this->mainCircuitMasks[i]), zero);
-		temp = _mm_and_si128(temp, _mm_shuffle_epi32(temp, _MM_SHUFFLE(2, 3, 0, 1)));
-		temp = _mm_and_si128(temp, _mm_shuffle_epi32(temp, _MM_SHUFFLE(1, 0, 3, 2)));
-		result.sseMask[0] = _mm_or_si128(result.sseMask[0], _mm_and_si128(temp, this->mainCircuitResults[i]));
-	}
+		for (const auto& device : this->devices)
+			device->changeStatus(result);
 
-	for (const auto& device : this->devices)
-		device->changeStatus(result);
+		result.sseMask[0] = this->constSensitiveMask[0];
 
-	this->markRecalculated();
-
-	result.sseMask[0] = this->constSensitiveMask[0];
-
-	const int loop3 = this->nStaticSensitives;
-	for (i = 0; i < loop3; ++i)
-	{
-		temp = _mm_cmpeq_epi32(_mm_andnot_si128(mask, this->staticSensitiveMasks[i]), zero);
-		temp = _mm_and_si128(temp, _mm_shuffle_epi32(temp, _MM_SHUFFLE(2, 3, 0, 1)));
-		temp = _mm_and_si128(temp, _mm_shuffle_epi32(temp, _MM_SHUFFLE(1, 0, 3, 2)));
-		result.sseMask[0] = _mm_or_si128(result.sseMask[0], _mm_and_si128(temp, this->staticSensitiveResults[i]));
+		const int loop3 = this->nStaticSensitives;
+		for (i = 0; i < loop3; ++i)
+		{
+			temp = _mm_cmpeq_epi32(_mm_andnot_si128(mask, this->staticSensitiveMasks[i]), zero);
+			temp = _mm_and_si128(temp, _mm_shuffle_epi32(temp, _MM_SHUFFLE(2, 3, 0, 1)));
+			temp = _mm_and_si128(temp, _mm_shuffle_epi32(temp, _MM_SHUFFLE(1, 0, 3, 2)));
+			result.sseMask[0] = _mm_or_si128(result.sseMask[0], _mm_and_si128(temp, this->staticSensitiveResults[i]));
+		}
 	}
 
 	const int loop4 = this->nDynamicSensitives;
@@ -146,6 +147,7 @@ void SchemeSse128::recalculate()
 	}
 
 	this->sensitives = result.sseMask[0];
+	this->markRecalculated();
 
 	QueryPerformanceCounter(&endTime);
 	this->workingTimes.push_back(this->getDiffTime(startTime, endTime));
@@ -158,7 +160,7 @@ void SchemeSse128::setStatusBit(int bit)
 	const unsigned long old = ptr[element];
 	ptr[element] |= _rotl(1, bit & 0x1F);
 	if (old != ptr[element])
-		this->markToRecalculate();
+		this->markToFullRecalculating();
 }
 
 void SchemeSse128::resetStatusBit(int bit)
@@ -168,7 +170,7 @@ void SchemeSse128::resetStatusBit(int bit)
 	const unsigned long old = ptr[element];
 	ptr[element] &= ~(_rotl(1, bit & 0x1F));
 	if (old != ptr[element])
-		this->markToRecalculate();
+		this->markToFullRecalculating();
 }
 
 void SchemeSse128::correctInputStatus(const OutputStream& maskOn, const OutputStream& maskOff, int id)
@@ -176,9 +178,9 @@ void SchemeSse128::correctInputStatus(const OutputStream& maskOn, const OutputSt
 	const __m128i oldStatus = this->status;
 	this->status = _mm_or_si128(_mm_load_si128(maskOn.sseMask), _mm_and_si128(this->status, _mm_load_si128(maskOff.sseMask)));
 
-	if (this->isNotMarkedToRecalculate())
+	if (!this->isMarkedToFullRecalculating())
 	{
 		if (_mm_movemask_epi8(_mm_cmpeq_epi32(_mm_xor_si128(oldStatus, this->status), _mm_setzero_si128())) != 0xFFFF)
-			this->markToRecalculate();
+			this->markToFullRecalculating();
 	}
 }

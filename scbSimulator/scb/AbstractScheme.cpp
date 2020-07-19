@@ -6,9 +6,9 @@ using namespace scb;
 
 AbstractScheme::~AbstractScheme()
 {
-	if (this->markedToRecalculate)
+	if (this->depthOfRecalculating != 0)
 	{
-		this->markedToRecalculate = false;
+		this->depthOfRecalculating = 0;
 		SchemeServer::getInstance()->deleteSchemeToRecalculate(this);
 	}
 	for (auto& ptr : this->devices)
@@ -49,11 +49,18 @@ void AbstractScheme::mapInputOutput ( int outputIndex, int inputBit, int outputB
 		this->devices[outputIndex]->mapInputOutput(inputBit, outputBit);
 }
 
-void AbstractScheme::markToRecalculate()
+void AbstractScheme::markToDynamicSensitivesRecalculating()
 {
-	if (!this->markedToRecalculate)
+	if (this->depthOfRecalculating == 0)
 	{
 		SchemeServer::getInstance()->addSchemeToRecalculate(this);
-		this->markedToRecalculate = true;
+		this->depthOfRecalculating = 1;
 	}
+}
+
+void AbstractScheme::markToFullRecalculating()
+{
+	if (this->depthOfRecalculating == 0)
+		SchemeServer::getInstance()->addSchemeToRecalculate(this);
+	this->depthOfRecalculating = 2;
 }

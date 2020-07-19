@@ -73,5 +73,5 @@ void ChainScheme::correctInputStatus(const OutputStream& maskOn, const OutputStr
 	}
 
 	if (changed)
-		this->markToRecalculate();
+		this->markToFullRecalculating();
 }

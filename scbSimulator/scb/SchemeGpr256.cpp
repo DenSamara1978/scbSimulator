@@ -93,86 +93,87 @@ void SchemeGpr256::recalculate()
 	unsigned long mask[] = {~this->status[0], ~this->status[1], ~this->status[2], ~this->status[3],
 							~this->status[4], ~this->status[5], ~this->status[6], ~this->status[7]};
 
-	const int loop1 = this->nPrepareCircuits;
-	if (loop1 > 0)
+	if (this->isMarkedToFullRecalculating())
 	{
-		for (i = 0; i < loop1; ++i)
+		const int loop1 = this->nPrepareCircuits;
+		if (loop1 > 0)
 		{
-			temp = (mask[0] & this->prepareCircuitMasks[i * 8]) | (mask[1] & this->prepareCircuitMasks[i * 8 + 1]) |
-				(mask[2] & this->prepareCircuitMasks[i * 8 + 2]) | (mask[3] & this->prepareCircuitMasks[i * 8 + 3]) |
-				(mask[4] & this->prepareCircuitMasks[i * 8 + 4]) | (mask[1] & this->prepareCircuitMasks[i * 8 + 5]) |
-				(mask[5] & this->prepareCircuitMasks[i * 8 + 6]) | (mask[3] & this->prepareCircuitMasks[i * 8 + 7]);
+			for (i = 0; i < loop1; ++i)
+			{
+				temp = (mask[0] & this->prepareCircuitMasks[i * 8]) | (mask[1] & this->prepareCircuitMasks[i * 8 + 1]) |
+					(mask[2] & this->prepareCircuitMasks[i * 8 + 2]) | (mask[3] & this->prepareCircuitMasks[i * 8 + 3]) |
+					(mask[4] & this->prepareCircuitMasks[i * 8 + 4]) | (mask[1] & this->prepareCircuitMasks[i * 8 + 5]) |
+					(mask[5] & this->prepareCircuitMasks[i * 8 + 6]) | (mask[3] & this->prepareCircuitMasks[i * 8 + 7]);
+				if (temp == 0)
+				{
+					result[0] |= this->prepareCircuitResults[i * 8];
+					result[1] |= this->prepareCircuitResults[i * 8 + 1];
+					result[2] |= this->prepareCircuitResults[i * 8 + 2];
+					result[3] |= this->prepareCircuitResults[i * 8 + 3];
+					result[4] |= this->prepareCircuitResults[i * 8 + 4];
+					result[5] |= this->prepareCircuitResults[i * 8 + 5];
+					result[6] |= this->prepareCircuitResults[i * 8 + 6];
+					result[7] |= this->prepareCircuitResults[i * 8 + 7];
+				}
+			}
+
+			mask[0] &= ~result[0];
+			mask[1] &= ~result[1];
+			mask[2] &= ~result[2];
+			mask[3] &= ~result[3];
+			mask[4] &= ~result[4];
+			mask[5] &= ~result[5];
+			mask[6] &= ~result[6];
+			mask[7] &= ~result[7];
+
+			memset(result, 0, 32);
+		}
+
+		const int loop2 = this->nMainCircuits;
+		for (i = 0; i < loop2; ++i)
+		{
+			temp = (mask[0] & this->mainCircuitMasks[i * 8]) | (mask[1] & this->mainCircuitMasks[i * 8 + 1]) |
+				(mask[2] & this->mainCircuitMasks[i * 8 + 2]) | (mask[3] & this->mainCircuitMasks[i * 8 + 3]) |
+				(mask[4] & this->mainCircuitMasks[i * 8 + 4]) | (mask[1] & this->mainCircuitMasks[i * 8 + 5]) |
+				(mask[5] & this->mainCircuitMasks[i * 8 + 6]) | (mask[3] & this->mainCircuitMasks[i * 8 + 7]);
 			if (temp == 0)
 			{
-				result[0] |= this->prepareCircuitResults[i * 8];
-				result[1] |= this->prepareCircuitResults[i * 8 + 1];
-				result[2] |= this->prepareCircuitResults[i * 8 + 2];
-				result[3] |= this->prepareCircuitResults[i * 8 + 3];
-				result[4] |= this->prepareCircuitResults[i * 8 + 4];
-				result[5] |= this->prepareCircuitResults[i * 8 + 5];
-				result[6] |= this->prepareCircuitResults[i * 8 + 6];
-				result[7] |= this->prepareCircuitResults[i * 8 + 7];
+				result[0] |= this->mainCircuitResults[i * 8];
+				result[1] |= this->mainCircuitResults[i * 8 + 1];
+				result[2] |= this->mainCircuitResults[i * 8 + 2];
+				result[3] |= this->mainCircuitResults[i * 8 + 3];
+				result[4] |= this->mainCircuitResults[i * 8 + 4];
+				result[5] |= this->mainCircuitResults[i * 8 + 5];
+				result[6] |= this->mainCircuitResults[i * 8 + 6];
+				result[7] |= this->mainCircuitResults[i * 8 + 7];
 			}
 		}
 
-		mask[0] &= ~result[0];
-		mask[1] &= ~result[1];
-		mask[2] &= ~result[2];
-		mask[3] &= ~result[3];
-		mask[4] &= ~result[4];
-		mask[5] &= ~result[5];
-		mask[6] &= ~result[6];
-		mask[7] &= ~result[7];
+		OutputStream stream;
+		memcpy(&(stream.mask), result, 32);
+		for (const auto& device : this->devices)
+			device->changeStatus(stream);
 
-		memset(result, 0, 32);
-	}
+		memcpy(result, this->constSensitiveMask, 32);
 
-	const int loop2 = this->nMainCircuits;
-	for (i = 0; i < loop2; ++i)
-	{
-		temp = (mask[0] & this->mainCircuitMasks[i * 8]) | (mask[1] & this->mainCircuitMasks[i * 8 + 1]) |
-			(mask[2] & this->mainCircuitMasks[i * 8 + 2]) | (mask[3] & this->mainCircuitMasks[i * 8 + 3]) |
-			(mask[4] & this->mainCircuitMasks[i * 8 + 4]) | (mask[1] & this->mainCircuitMasks[i * 8 + 5]) |
-			(mask[5] & this->mainCircuitMasks[i * 8 + 6]) | (mask[3] & this->mainCircuitMasks[i * 8 + 7]);
-		if (temp == 0)
+		const int loop3 = this->nStaticSensitives;
+		for (i = 0; i < loop3; ++i)
 		{
-			result[0] |= this->mainCircuitResults[i * 8];
-			result[1] |= this->mainCircuitResults[i * 8 + 1];
-			result[2] |= this->mainCircuitResults[i * 8 + 2];
-			result[3] |= this->mainCircuitResults[i * 8 + 3];
-			result[4] |= this->mainCircuitResults[i * 8 + 4];
-			result[5] |= this->mainCircuitResults[i * 8 + 5];
-			result[6] |= this->mainCircuitResults[i * 8 + 6];
-			result[7] |= this->mainCircuitResults[i * 8 + 7];
-		}
-	}
-
-	OutputStream stream;
-	memcpy(&(stream.mask), result, 32);
-	for (const auto& device : this->devices)
-		device->changeStatus(stream);
-
-	this->markRecalculated();
-
-	memcpy(result, this->constSensitiveMask, 32);
-
-	const int loop3 = this->nStaticSensitives;
-	for (i = 0; i < loop3; ++i)
-	{
-		temp = (mask[0] & this->staticSensitiveMasks[i * 8]) | (mask[1] & this->staticSensitiveMasks[i * 8 + 1]) |
-			(mask[2] & this->staticSensitiveMasks[i * 8 + 2]) | (mask[3] & this->staticSensitiveMasks[i * 8 + 3]) |
-			(mask[4] & this->staticSensitiveMasks[i * 8 + 4]) | (mask[1] & this->staticSensitiveMasks[i * 8 + 5]) |
-			(mask[5] & this->staticSensitiveMasks[i * 8 + 6]) | (mask[3] & this->staticSensitiveMasks[i * 8 + 7]);
-		if (temp == 0)
-		{
-			result[0] |= this->staticSensitiveResults[i * 8];
-			result[1] |= this->staticSensitiveResults[i * 8 + 1];
-			result[2] |= this->staticSensitiveResults[i * 8 + 2];
-			result[3] |= this->staticSensitiveResults[i * 8 + 3];
-			result[4] |= this->staticSensitiveResults[i * 8 + 4];
-			result[5] |= this->staticSensitiveResults[i * 8 + 5];
-			result[6] |= this->staticSensitiveResults[i * 8 + 6];
-			result[7] |= this->staticSensitiveResults[i * 8 + 7];
+			temp = (mask[0] & this->staticSensitiveMasks[i * 8]) | (mask[1] & this->staticSensitiveMasks[i * 8 + 1]) |
+				(mask[2] & this->staticSensitiveMasks[i * 8 + 2]) | (mask[3] & this->staticSensitiveMasks[i * 8 + 3]) |
+				(mask[4] & this->staticSensitiveMasks[i * 8 + 4]) | (mask[1] & this->staticSensitiveMasks[i * 8 + 5]) |
+				(mask[5] & this->staticSensitiveMasks[i * 8 + 6]) | (mask[3] & this->staticSensitiveMasks[i * 8 + 7]);
+			if (temp == 0)
+			{
+				result[0] |= this->staticSensitiveResults[i * 8];
+				result[1] |= this->staticSensitiveResults[i * 8 + 1];
+				result[2] |= this->staticSensitiveResults[i * 8 + 2];
+				result[3] |= this->staticSensitiveResults[i * 8 + 3];
+				result[4] |= this->staticSensitiveResults[i * 8 + 4];
+				result[5] |= this->staticSensitiveResults[i * 8 + 5];
+				result[6] |= this->staticSensitiveResults[i * 8 + 6];
+				result[7] |= this->staticSensitiveResults[i * 8 + 7];
+			}
 		}
 	}
 
@@ -197,6 +198,7 @@ void SchemeGpr256::recalculate()
 	}
 
 	memcpy(this->sensitives, result, 32);
+	this->markRecalculated();
 
 	QueryPerformanceCounter(&endTime);
 	this->workingTimes.push_back(this->getDiffTime(startTime, endTime));
@@ -208,7 +210,7 @@ void SchemeGpr256::setStatusBit(int bit)
 	const unsigned long old = this->status[element];
 	this->status[element] |= _rotl(1, bit & 0x1F);
 	if (old != this->status[element])
-		this->markToRecalculate();
+		this->markToFullRecalculating();
 }
 
 void SchemeGpr256::resetStatusBit(int bit)
@@ -217,7 +219,7 @@ void SchemeGpr256::resetStatusBit(int bit)
 	const unsigned long old = this->status[element];
 	this->status[element] &= ~(_rotl(1, bit & 0x1F));
 	if (old != this->status[element])
-		this->markToRecalculate();
+		this->markToFullRecalculating();
 }
 
 void SchemeGpr256::correctInputStatus(const OutputStream& maskOn, const OutputStream& maskOff, int id)
@@ -233,5 +235,5 @@ void SchemeGpr256::correctInputStatus(const OutputStream& maskOn, const OutputSt
 	}
 
 	if (difference != 0)
-		this->markToRecalculate();
+		this->markToFullRecalculating();
 }

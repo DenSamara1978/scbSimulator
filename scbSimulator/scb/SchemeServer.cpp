@@ -121,7 +121,7 @@ void SchemeServer::initialize()
 	for (auto& scheme : this->schemes)
 	{
 		scheme->initialize();
-		scheme->markToRecalculate();
+		scheme->markToFullRecalculating();
 	}
 }
 

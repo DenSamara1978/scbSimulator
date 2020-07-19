@@ -34,7 +34,8 @@ namespace scb
 		virtual void resetStatusBit(int bit) abstract;
 		virtual void correctInputStatus(const OutputStream& maskOn, const OutputStream& maskOff, int id) abstract;
 
-		void markToRecalculate();
+		void markToDynamicSensitivesRecalculating();
+		void markToFullRecalculating();
 
 		unsigned long long getAverageWorkingTime() const;
 
@@ -43,19 +44,22 @@ namespace scb
 		vector<AbstractSchemeDevice*> devices;
 
 		void markRecalculated();
-		bool isNotMarkedToRecalculate() const;
+		bool isMarkedToDynamicSensitivesRecalculating() const;
+		bool isMarkedToFullRecalculating() const;
 
 		unsigned long long getDiffTime(const LARGE_INTEGER& start, const LARGE_INTEGER& end) const;
 		vector<unsigned long long> workingTimes;
 
 	private:
 		wstring name;
-		bool markedToRecalculate;
+
+		// Глубина расчета: 0 - нет, 1 - только дин.чувствительности, 2 - полный расчет
+		int depthOfRecalculating;
 	};
 
 	inline AbstractScheme::AbstractScheme(const wstring& name) :
 		name(name),
-		markedToRecalculate(false)
+		depthOfRecalculating(0)
 	{
 	}
 
@@ -81,14 +85,18 @@ namespace scb
 
 	inline void AbstractScheme::markRecalculated()
 	{
-		this->markedToRecalculate = false;
+		this->depthOfRecalculating = 0;
 	}
 
-	inline bool AbstractScheme::isNotMarkedToRecalculate() const
+	inline bool AbstractScheme::isMarkedToDynamicSensitivesRecalculating() const
 	{
-		return !this->markedToRecalculate;
+		return (this->depthOfRecalculating > 0);
 	}
 
+	inline bool AbstractScheme::isMarkedToFullRecalculating() const
+	{
+		return (this->depthOfRecalculating == 2);
+	}
 
 	inline unsigned long long AbstractScheme::getDiffTime(const LARGE_INTEGER& start, const LARGE_INTEGER& end) const
 	{
