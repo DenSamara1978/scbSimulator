@@ -117,6 +117,8 @@ public:
     //! Get the error offset, if \ref IsError(), 0 otherwise.
     size_t Offset() const { return offset_; }
 
+    int Row() const { return row_; }
+
     //! Explicit conversion to \c bool, returns \c true, iff !\ref IsError().
     operator BooleanType() const { return !IsError() ? &ParseResult::IsError : NULL; }
     //! Whether the result is an error.
@@ -131,13 +133,14 @@ public:
     friend bool operator!=(ParseErrorCode code, const ParseResult & err) { return err != code; }
 
     //! Reset error code.
-    void Clear() { Set(kParseErrorNone); }
+    void Clear() { Set(kParseErrorNone, 0); }
     //! Update error code and offset.
-    void Set(ParseErrorCode code, size_t offset = 0) { code_ = code; offset_ = offset; }
+    void Set(ParseErrorCode code, int row, size_t offset = 0) { code_ = code; offset_ = offset; row_ = row; }
 
 private:
     ParseErrorCode code_;
     size_t offset_;
+    int row_;
 };
 
 //! Function pointer type of GetParseError().

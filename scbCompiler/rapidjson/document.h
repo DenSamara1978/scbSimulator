@@ -2472,6 +2472,8 @@ public:
     //! Get the position of last parsing error in input, 0 otherwise.
     size_t GetErrorOffset() const { return parseResult_.Offset(); }
 
+    int GetErrorRow() const { return parseResult_.Row(); }
+
     //! Implicit conversion to get the last parse result
 #ifndef __clang // -Wdocumentation
     /*! \return \ref ParseResult of the last parse operation

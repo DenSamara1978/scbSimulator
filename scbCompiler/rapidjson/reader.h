@@ -97,10 +97,10 @@ RAPIDJSON_DIAG_OFF(effc++)
     \see RAPIDJSON_PARSE_ERROR, rapidjson::GenericReader::Parse
  */
 #ifndef RAPIDJSON_PARSE_ERROR_NORETURN
-#define RAPIDJSON_PARSE_ERROR_NORETURN(parseErrorCode, offset) \
+#define RAPIDJSON_PARSE_ERROR_NORETURN(parseErrorCode, row, offset) \
     RAPIDJSON_MULTILINEMACRO_BEGIN \
     RAPIDJSON_ASSERT(!HasParseError()); /* Error can only be assigned once */ \
-    SetParseError(parseErrorCode, offset); \
+    SetParseError(parseErrorCode, row, offset); \
     RAPIDJSON_MULTILINEMACRO_END
 #endif
 
@@ -116,9 +116,9 @@ RAPIDJSON_DIAG_OFF(effc++)
     \hideinitializer
  */
 #ifndef RAPIDJSON_PARSE_ERROR
-#define RAPIDJSON_PARSE_ERROR(parseErrorCode, offset) \
+#define RAPIDJSON_PARSE_ERROR(parseErrorCode, row, offset) \
     RAPIDJSON_MULTILINEMACRO_BEGIN \
-    RAPIDJSON_PARSE_ERROR_NORETURN(parseErrorCode, offset); \
+    RAPIDJSON_PARSE_ERROR_NORETURN(parseErrorCode, row, offset); \
     RAPIDJSON_PARSE_ERROR_EARLY_RETURN_VOID; \
     RAPIDJSON_MULTILINEMACRO_END
 #endif
@@ -263,27 +263,39 @@ private:
     \note This function has SSE2/SSE4.2 specialization.
 */
 template<typename InputStream>
-void SkipWhitespace(InputStream& is) {
+void SkipWhitespace(InputStream& is, int& rows) {
     internal::StreamLocalCopy<InputStream> copy(is);
     InputStream& s(copy.s);
 
     typename InputStream::Ch c;
     while ((c = s.Peek()) == ' ' || c == '\n' || c == '\r' || c == '\t')
+    {
+        if (c == '\n')
+            ++rows;
         s.Take();
+    }
 }
 
-inline const char* SkipWhitespace(const char* p, const char* end) {
+inline const char* SkipWhitespace(const char* p, const char* end, int& rows) {
     while (p != end && (*p == ' ' || *p == '\n' || *p == '\r' || *p == '\t'))
+    {
+        if (*p == '\n')
+            ++rows;
         ++p;
+    }
     return p;
 }
 
 #ifdef RAPIDJSON_SSE42
 //! Skip whitespace with SSE 4.2 pcmpistrm instruction, testing 16 8-byte characters at once.
-inline const char *SkipWhitespace_SIMD(const char* p) {
+inline const char *SkipWhitespace_SIMD(const char* p, int& rows) {
     // Fast return for single non-whitespace
     if (*p == ' ' || *p == '\n' || *p == '\r' || *p == '\t')
+    {
+        if (*p == '\n')
+            ++rows;
         ++p;
+    }
     else
         return p;
 
@@ -291,35 +303,51 @@ inline const char *SkipWhitespace_SIMD(const char* p) {
     const char* nextAligned = reinterpret_cast<const char*>((reinterpret_cast<size_t>(p) + 15) & static_cast<size_t>(~15));
     while (p != nextAligned)
         if (*p == ' ' || *p == '\n' || *p == '\r' || *p == '\t')
+        {
+            if (*p == '\n')
+                ++rows;
             ++p;
+        }
         else
             return p;
 
     // The rest of string using SIMD
     static const char whitespace[16] = " \n\r\t";
+    static const char newline[16] = "\n";
     const __m128i w = _mm_loadu_si128(reinterpret_cast<const __m128i *>(&whitespace[0]));
+    const __m128i nl = _mm_loadu_si128(reinterpret_cast<const __m128i*>(&newline[0]));
 
     for (;; p += 16) {
         const __m128i s = _mm_load_si128(reinterpret_cast<const __m128i *>(p));
+        const int n = _mm_cmpistri(nl, s, _SIDD_UBYTE_OPS | _SIDD_CMP_EQUAL_ANY | _SIDD_LEAST_SIGNIFICANT | _SIDD_NEGATIVE_POLARITY);
+        rows += (16 - n);
         const int r = _mm_cmpistri(w, s, _SIDD_UBYTE_OPS | _SIDD_CMP_EQUAL_ANY | _SIDD_LEAST_SIGNIFICANT | _SIDD_NEGATIVE_POLARITY);
         if (r != 16)    // some of characters is non-whitespace
             return p + r;
     }
 }
 
-inline const char *SkipWhitespace_SIMD(const char* p, const char* end) {
+inline const char *SkipWhitespace_SIMD(const char* p, const char* end, int& rows) {
     // Fast return for single non-whitespace
     if (p != end && (*p == ' ' || *p == '\n' || *p == '\r' || *p == '\t'))
+    {
+        if (*p == '\n')
+            ++rows;
         ++p;
+    }
     else
         return p;
 
     // The middle of string using SIMD
     static const char whitespace[16] = " \n\r\t";
+    static const char newline[16] = "\n";
     const __m128i w = _mm_loadu_si128(reinterpret_cast<const __m128i *>(&whitespace[0]));
+    const __m128i nl = _mm_loadu_si128(reinterpret_cast<const __m128i*>(&newline[0]));
 
     for (; p <= end - 16; p += 16) {
         const __m128i s = _mm_loadu_si128(reinterpret_cast<const __m128i *>(p));
+        const int n = _mm_cmpistri(nl, s, _SIDD_UBYTE_OPS | _SIDD_CMP_EQUAL_ANY | _SIDD_LEAST_SIGNIFICANT | _SIDD_NEGATIVE_POLARITY);
+        rows += (16 - n);
         const int r = _mm_cmpistri(w, s, _SIDD_UBYTE_OPS | _SIDD_CMP_EQUAL_ANY | _SIDD_LEAST_SIGNIFICANT | _SIDD_NEGATIVE_POLARITY);
         if (r != 16)    // some of characters is non-whitespace
             return p + r;
@@ -331,10 +359,14 @@ inline const char *SkipWhitespace_SIMD(const char* p, const char* end) {
 #elif defined(RAPIDJSON_SSE2)
 
 //! Skip whitespace with SSE2 instructions, testing 16 8-byte characters at once.
-inline const char *SkipWhitespace_SIMD(const char* p) {
+inline const char *SkipWhitespace_SIMD(const char* p, int& rows) {
     // Fast return for single non-whitespace
     if (*p == ' ' || *p == '\n' || *p == '\r' || *p == '\t')
+    {
+        if (*p == '\n')
+            ++rows;
         ++p;
+    }
     else
         return p;
 
@@ -342,7 +374,11 @@ inline const char *SkipWhitespace_SIMD(const char* p) {
     const char* nextAligned = reinterpret_cast<const char*>((reinterpret_cast<size_t>(p) + 15) & static_cast<size_t>(~15));
     while (p != nextAligned)
         if (*p == ' ' || *p == '\n' || *p == '\r' || *p == '\t')
+        {
+            if (*p == '\n')
+                ++rows;
             ++p;
+        }
         else
             return p;
 
@@ -375,10 +411,14 @@ inline const char *SkipWhitespace_SIMD(const char* p) {
     }
 }
 
-inline const char *SkipWhitespace_SIMD(const char* p, const char* end) {
+inline const char *SkipWhitespace_SIMD(const char* p, const char* end, int& rows) {
     // Fast return for single non-whitespace
     if (p != end && (*p == ' ' || *p == '\n' || *p == '\r' || *p == '\t'))
+    {
+        if (*p == '\n')
+            ++rows;
         ++p;
+    }
     else
         return p;
 
@@ -416,10 +456,14 @@ inline const char *SkipWhitespace_SIMD(const char* p, const char* end) {
 #elif defined(RAPIDJSON_NEON)
 
 //! Skip whitespace with ARM Neon instructions, testing 16 8-byte characters at once.
-inline const char *SkipWhitespace_SIMD(const char* p) {
+inline const char *SkipWhitespace_SIMD(const char* p, int& rows) {
     // Fast return for single non-whitespace
     if (*p == ' ' || *p == '\n' || *p == '\r' || *p == '\t')
+    {
+        if (*p == '\n')
+            ++rows;
         ++p;
+    }
     else
         return p;
 
@@ -427,7 +471,11 @@ inline const char *SkipWhitespace_SIMD(const char* p) {
     const char* nextAligned = reinterpret_cast<const char*>((reinterpret_cast<size_t>(p) + 15) & static_cast<size_t>(~15));
     while (p != nextAligned)
         if (*p == ' ' || *p == '\n' || *p == '\r' || *p == '\t')
+        {
+            if (*p == '\n')
+                ++rows;
             ++p;
+        }
         else
             return p;
 
@@ -460,10 +508,14 @@ inline const char *SkipWhitespace_SIMD(const char* p) {
     }
 }
 
-inline const char *SkipWhitespace_SIMD(const char* p, const char* end) {
+inline const char *SkipWhitespace_SIMD(const char* p, const char* end, int& rows) {
     // Fast return for single non-whitespace
     if (p != end && (*p == ' ' || *p == '\n' || *p == '\r' || *p == '\t'))
+    {
+        if (*p == '\n')
+            ++rows;
         ++p;
+    }
     else
         return p;
 
@@ -502,17 +554,17 @@ inline const char *SkipWhitespace_SIMD(const char* p, const char* end) {
 
 #ifdef RAPIDJSON_SIMD
 //! Template function specialization for InsituStringStream
-template<> inline void SkipWhitespace(InsituStringStream& is) {
-    is.src_ = const_cast<char*>(SkipWhitespace_SIMD(is.src_));
+template<> inline void SkipWhitespace(InsituStringStream& is, int& rows) {
+    is.src_ = const_cast<char*>(SkipWhitespace_SIMD(is.src_, rows));
 }
 
 //! Template function specialization for StringStream
-template<> inline void SkipWhitespace(StringStream& is) {
-    is.src_ = SkipWhitespace_SIMD(is.src_);
+template<> inline void SkipWhitespace(StringStream& is, int& rows) {
+    is.src_ = SkipWhitespace_SIMD(is.src_, rows);
 }
 
-template<> inline void SkipWhitespace(EncodedInputStream<UTF8<>, MemoryStream>& is) {
-    is.is_.src_ = SkipWhitespace_SIMD(is.is_.src_, is.is_.end_);
+template<> inline void SkipWhitespace(EncodedInputStream<UTF8<>, MemoryStream>& is, int& rows) {
+    is.is_.src_ = SkipWhitespace_SIMD(is.is_.src_, is.is_.end_, rows);
 }
 #endif // RAPIDJSON_SIMD
 
@@ -564,11 +616,12 @@ public:
 
         ClearStackOnExit scope(*this);
 
+        currentRow = 0;
         SkipWhitespaceAndComments<parseFlags>(is);
         RAPIDJSON_PARSE_ERROR_EARLY_RETURN(parseResult_);
 
         if (RAPIDJSON_UNLIKELY(is.Peek() == '\0')) {
-            RAPIDJSON_PARSE_ERROR_NORETURN(kParseErrorDocumentEmpty, is.Tell());
+            RAPIDJSON_PARSE_ERROR_NORETURN(kParseErrorDocumentEmpty, currentRow, is.Tell());
             RAPIDJSON_PARSE_ERROR_EARLY_RETURN(parseResult_);
         }
         else {
@@ -580,7 +633,7 @@ public:
                 RAPIDJSON_PARSE_ERROR_EARLY_RETURN(parseResult_);
 
                 if (RAPIDJSON_UNLIKELY(is.Peek() != '\0')) {
-                    RAPIDJSON_PARSE_ERROR_NORETURN(kParseErrorDocumentRootNotSingular, is.Tell());
+                    RAPIDJSON_PARSE_ERROR_NORETURN(kParseErrorDocumentRootNotSingular, currentRow, is.Tell());
                     RAPIDJSON_PARSE_ERROR_EARLY_RETURN(parseResult_);
                 }
             }
@@ -688,7 +741,7 @@ public:
     size_t GetErrorOffset() const { return parseResult_.Offset(); }
 
 protected:
-    void SetParseError(ParseErrorCode code, size_t offset) { parseResult_.Set(code, offset); }
+    void SetParseError(ParseErrorCode code, int row, size_t offset) { parseResult_.Set(code, row, offset); }
 
 private:
     // Prohibit copy constructor & assignment operator.
@@ -709,14 +762,14 @@ private:
 
     template<unsigned parseFlags, typename InputStream>
     void SkipWhitespaceAndComments(InputStream& is) {
-        SkipWhitespace(is);
+        SkipWhitespace(is, currentRow);
 
         if (parseFlags & kParseCommentsFlag) {
             while (RAPIDJSON_UNLIKELY(Consume(is, '/'))) {
                 if (Consume(is, '*')) {
                     while (true) {
                         if (RAPIDJSON_UNLIKELY(is.Peek() == '\0'))
-                            RAPIDJSON_PARSE_ERROR(kParseErrorUnspecificSyntaxError, is.Tell());
+                            RAPIDJSON_PARSE_ERROR(kParseErrorUnspecificSyntaxError, currentRow, is.Tell());
                         else if (Consume(is, '*')) {
                             if (Consume(is, '/'))
                                 break;
@@ -726,11 +779,24 @@ private:
                     }
                 }
                 else if (RAPIDJSON_LIKELY(Consume(is, '/')))
-                    while (is.Peek() != '\0' && is.Take() != '\n') {}
-                else
-                    RAPIDJSON_PARSE_ERROR(kParseErrorUnspecificSyntaxError, is.Tell());
+                {
+                    while (true)
+                    {
+                        if (is.Peek() == '\0')
+                            break;;
+                        if (is.Take() == '\n')
+                        {
+                            ++currentRow;
+                            break;
+                        }
+                    }
 
-                SkipWhitespace(is);
+//                    while (is.Peek() != '\0' && is.Take() != '\n') {}
+                }
+                else
+                    RAPIDJSON_PARSE_ERROR(kParseErrorUnspecificSyntaxError, currentRow, is.Tell());
+
+                SkipWhitespace(is, currentRow);
             }
         }
     }
@@ -742,20 +808,20 @@ private:
         is.Take();  // Skip '{'
 
         if (RAPIDJSON_UNLIKELY(!handler.StartObject()))
-            RAPIDJSON_PARSE_ERROR(kParseErrorTermination, is.Tell());
+            RAPIDJSON_PARSE_ERROR(kParseErrorTermination, currentRow, is.Tell());
 
         SkipWhitespaceAndComments<parseFlags>(is);
         RAPIDJSON_PARSE_ERROR_EARLY_RETURN_VOID;
 
         if (Consume(is, '}')) {
             if (RAPIDJSON_UNLIKELY(!handler.EndObject(0)))  // empty object
-                RAPIDJSON_PARSE_ERROR(kParseErrorTermination, is.Tell());
+                RAPIDJSON_PARSE_ERROR(kParseErrorTermination, currentRow, is.Tell());
             return;
         }
 
         for (SizeType memberCount = 0;;) {
             if (RAPIDJSON_UNLIKELY(is.Peek() != '"'))
-                RAPIDJSON_PARSE_ERROR(kParseErrorObjectMissName, is.Tell());
+                RAPIDJSON_PARSE_ERROR(kParseErrorObjectMissName, currentRow, is.Tell());
 
             ParseString<parseFlags>(is, handler, true);
             RAPIDJSON_PARSE_ERROR_EARLY_RETURN_VOID;
@@ -764,7 +830,7 @@ private:
             RAPIDJSON_PARSE_ERROR_EARLY_RETURN_VOID;
 
             if (RAPIDJSON_UNLIKELY(!Consume(is, ':')))
-                RAPIDJSON_PARSE_ERROR(kParseErrorObjectMissColon, is.Tell());
+                RAPIDJSON_PARSE_ERROR(kParseErrorObjectMissColon, currentRow, is.Tell());
 
             SkipWhitespaceAndComments<parseFlags>(is);
             RAPIDJSON_PARSE_ERROR_EARLY_RETURN_VOID;
@@ -786,16 +852,16 @@ private:
                 case '}':
                     is.Take();
                     if (RAPIDJSON_UNLIKELY(!handler.EndObject(memberCount)))
-                        RAPIDJSON_PARSE_ERROR(kParseErrorTermination, is.Tell());
+                        RAPIDJSON_PARSE_ERROR(kParseErrorTermination, currentRow, is.Tell());
                     return;
                 default:
-                    RAPIDJSON_PARSE_ERROR(kParseErrorObjectMissCommaOrCurlyBracket, is.Tell()); break; // This useless break is only for making warning and coverage happy
+                    RAPIDJSON_PARSE_ERROR(kParseErrorObjectMissCommaOrCurlyBracket, currentRow, is.Tell()); break; // This useless break is only for making warning and coverage happy
             }
 
             if (parseFlags & kParseTrailingCommasFlag) {
                 if (is.Peek() == '}') {
                     if (RAPIDJSON_UNLIKELY(!handler.EndObject(memberCount)))
-                        RAPIDJSON_PARSE_ERROR(kParseErrorTermination, is.Tell());
+                        RAPIDJSON_PARSE_ERROR(kParseErrorTermination, currentRow, is.Tell());
                     is.Take();
                     return;
                 }
@@ -810,14 +876,14 @@ private:
         is.Take();  // Skip '['
 
         if (RAPIDJSON_UNLIKELY(!handler.StartArray()))
-            RAPIDJSON_PARSE_ERROR(kParseErrorTermination, is.Tell());
+            RAPIDJSON_PARSE_ERROR(kParseErrorTermination, currentRow, is.Tell());
 
         SkipWhitespaceAndComments<parseFlags>(is);
         RAPIDJSON_PARSE_ERROR_EARLY_RETURN_VOID;
 
         if (Consume(is, ']')) {
             if (RAPIDJSON_UNLIKELY(!handler.EndArray(0))) // empty array
-                RAPIDJSON_PARSE_ERROR(kParseErrorTermination, is.Tell());
+                RAPIDJSON_PARSE_ERROR(kParseErrorTermination, currentRow, is.Tell());
             return;
         }
 
@@ -835,16 +901,16 @@ private:
             }
             else if (Consume(is, ']')) {
                 if (RAPIDJSON_UNLIKELY(!handler.EndArray(elementCount)))
-                    RAPIDJSON_PARSE_ERROR(kParseErrorTermination, is.Tell());
+                    RAPIDJSON_PARSE_ERROR(kParseErrorTermination, currentRow, is.Tell());
                 return;
             }
             else
-                RAPIDJSON_PARSE_ERROR(kParseErrorArrayMissCommaOrSquareBracket, is.Tell());
+                RAPIDJSON_PARSE_ERROR(kParseErrorArrayMissCommaOrSquareBracket, currentRow, is.Tell());
 
             if (parseFlags & kParseTrailingCommasFlag) {
                 if (is.Peek() == ']') {
                     if (RAPIDJSON_UNLIKELY(!handler.EndArray(elementCount)))
-                        RAPIDJSON_PARSE_ERROR(kParseErrorTermination, is.Tell());
+                        RAPIDJSON_PARSE_ERROR(kParseErrorTermination, currentRow, is.Tell());
                     is.Take();
                     return;
                 }
@@ -859,10 +925,10 @@ private:
 
         if (RAPIDJSON_LIKELY(Consume(is, 'u') && Consume(is, 'l') && Consume(is, 'l'))) {
             if (RAPIDJSON_UNLIKELY(!handler.Null()))
-                RAPIDJSON_PARSE_ERROR(kParseErrorTermination, is.Tell());
+                RAPIDJSON_PARSE_ERROR(kParseErrorTermination, currentRow, is.Tell());
         }
         else
-            RAPIDJSON_PARSE_ERROR(kParseErrorValueInvalid, is.Tell());
+            RAPIDJSON_PARSE_ERROR(kParseErrorValueInvalid, currentRow, is.Tell());
     }
 
     template<unsigned parseFlags, typename InputStream, typename Handler>
@@ -872,10 +938,10 @@ private:
 
         if (RAPIDJSON_LIKELY(Consume(is, 'r') && Consume(is, 'u') && Consume(is, 'e'))) {
             if (RAPIDJSON_UNLIKELY(!handler.Bool(true)))
-                RAPIDJSON_PARSE_ERROR(kParseErrorTermination, is.Tell());
+                RAPIDJSON_PARSE_ERROR(kParseErrorTermination, currentRow, is.Tell());
         }
         else
-            RAPIDJSON_PARSE_ERROR(kParseErrorValueInvalid, is.Tell());
+            RAPIDJSON_PARSE_ERROR(kParseErrorValueInvalid, currentRow, is.Tell());
     }
 
     template<unsigned parseFlags, typename InputStream, typename Handler>
@@ -885,10 +951,10 @@ private:
 
         if (RAPIDJSON_LIKELY(Consume(is, 'a') && Consume(is, 'l') && Consume(is, 's') && Consume(is, 'e'))) {
             if (RAPIDJSON_UNLIKELY(!handler.Bool(false)))
-                RAPIDJSON_PARSE_ERROR(kParseErrorTermination, is.Tell());
+                RAPIDJSON_PARSE_ERROR(kParseErrorTermination, currentRow, is.Tell());
         }
         else
-            RAPIDJSON_PARSE_ERROR(kParseErrorValueInvalid, is.Tell());
+            RAPIDJSON_PARSE_ERROR(kParseErrorValueInvalid, currentRow, is.Tell());
     }
 
     template<typename InputStream>
@@ -916,7 +982,7 @@ private:
             else if (c >= 'a' && c <= 'f')
                 codepoint -= 'a' - 10;
             else {
-                RAPIDJSON_PARSE_ERROR_NORETURN(kParseErrorStringUnicodeEscapeInvalidHex, escapeOffset);
+                RAPIDJSON_PARSE_ERROR_NORETURN(kParseErrorStringUnicodeEscapeInvalidHex, currentRow, escapeOffset);
                 RAPIDJSON_PARSE_ERROR_EARLY_RETURN(0);
             }
             is.Take();
@@ -982,7 +1048,7 @@ private:
             success = (isKey ? handler.Key(str, length, true) : handler.String(str, length, true));
         }
         if (RAPIDJSON_UNLIKELY(!success))
-            RAPIDJSON_PARSE_ERROR(kParseErrorTermination, s.Tell());
+            RAPIDJSON_PARSE_ERROR(kParseErrorTermination, currentRow, s.Tell());
     }
 
     // Parse string to an output is
@@ -1026,17 +1092,17 @@ private:
                     if (RAPIDJSON_UNLIKELY(codepoint >= 0xD800 && codepoint <= 0xDBFF)) {
                         // Handle UTF-16 surrogate pair
                         if (RAPIDJSON_UNLIKELY(!Consume(is, '\\') || !Consume(is, 'u')))
-                            RAPIDJSON_PARSE_ERROR(kParseErrorStringUnicodeSurrogateInvalid, escapeOffset);
+                            RAPIDJSON_PARSE_ERROR(kParseErrorStringUnicodeSurrogateInvalid, currentRow, escapeOffset);
                         unsigned codepoint2 = ParseHex4(is, escapeOffset);
                         RAPIDJSON_PARSE_ERROR_EARLY_RETURN_VOID;
                         if (RAPIDJSON_UNLIKELY(codepoint2 < 0xDC00 || codepoint2 > 0xDFFF))
-                            RAPIDJSON_PARSE_ERROR(kParseErrorStringUnicodeSurrogateInvalid, escapeOffset);
+                            RAPIDJSON_PARSE_ERROR(kParseErrorStringUnicodeSurrogateInvalid, currentRow, escapeOffset);
                         codepoint = (((codepoint - 0xD800) << 10) | (codepoint2 - 0xDC00)) + 0x10000;
                     }
                     TEncoding::Encode(os, codepoint);
                 }
                 else
-                    RAPIDJSON_PARSE_ERROR(kParseErrorStringEscapeInvalid, escapeOffset);
+                    RAPIDJSON_PARSE_ERROR(kParseErrorStringEscapeInvalid, currentRow, escapeOffset);
             }
             else if (RAPIDJSON_UNLIKELY(c == '"')) {    // Closing double quote
                 is.Take();
@@ -1045,16 +1111,16 @@ private:
             }
             else if (RAPIDJSON_UNLIKELY(static_cast<unsigned>(c) < 0x20)) { // RFC 4627: unescaped = %x20-21 / %x23-5B / %x5D-10FFFF
                 if (c == '\0')
-                    RAPIDJSON_PARSE_ERROR(kParseErrorStringMissQuotationMark, is.Tell());
+                    RAPIDJSON_PARSE_ERROR(kParseErrorStringMissQuotationMark, currentRow, is.Tell());
                 else
-                    RAPIDJSON_PARSE_ERROR(kParseErrorStringInvalidEncoding, is.Tell());
+                    RAPIDJSON_PARSE_ERROR(kParseErrorStringInvalidEncoding, currentRow, is.Tell());
             }
             else {
                 size_t offset = is.Tell();
                 if (RAPIDJSON_UNLIKELY((parseFlags & kParseValidateEncodingFlag ?
                     !Transcoder<SEncoding, TEncoding>::Validate(is, os) :
                     !Transcoder<SEncoding, TEncoding>::Transcode(is, os))))
-                    RAPIDJSON_PARSE_ERROR(kParseErrorStringInvalidEncoding, offset);
+                    RAPIDJSON_PARSE_ERROR(kParseErrorStringInvalidEncoding, currentRow, offset);
             }
         }
     }
@@ -1419,6 +1485,7 @@ private:
         NumberStream& operator=(const NumberStream&);
 
         InputStream& is;
+        int currentRow;
     };
 
     template<typename InputStream>
@@ -1525,17 +1592,17 @@ private:
 
                     if (RAPIDJSON_UNLIKELY(s.Peek() == 'i' && !(Consume(s, 'i') && Consume(s, 'n')
                                                                 && Consume(s, 'i') && Consume(s, 't') && Consume(s, 'y')))) {
-                        RAPIDJSON_PARSE_ERROR(kParseErrorValueInvalid, s.Tell());
+                        RAPIDJSON_PARSE_ERROR(kParseErrorValueInvalid, currentRow, s.Tell());
                     }
                 }
             }
 
             if (RAPIDJSON_UNLIKELY(!useNanOrInf)) {
-                RAPIDJSON_PARSE_ERROR(kParseErrorValueInvalid, s.Tell());
+                RAPIDJSON_PARSE_ERROR(kParseErrorValueInvalid, currentRow, s.Tell());
             }
         }
         else
-            RAPIDJSON_PARSE_ERROR(kParseErrorValueInvalid, s.Tell());
+            RAPIDJSON_PARSE_ERROR(kParseErrorValueInvalid, currentRow, s.Tell());
 
         // Parse 64bit int
         bool useDouble = false;
@@ -1578,7 +1645,7 @@ private:
             decimalPosition = s.Length();
 
             if (RAPIDJSON_UNLIKELY(!(s.Peek() >= '0' && s.Peek() <= '9')))
-                RAPIDJSON_PARSE_ERROR(kParseErrorNumberMissFraction, s.Tell());
+                RAPIDJSON_PARSE_ERROR(kParseErrorNumberMissFraction, currentRow, s.Tell());
 
             if (!useDouble) {
 #if RAPIDJSON_64BIT
@@ -1658,12 +1725,12 @@ private:
                     while (RAPIDJSON_LIKELY(s.Peek() >= '0' && s.Peek() <= '9')) {
                         exp = exp * 10 + static_cast<int>(s.Take() - '0');
                         if (RAPIDJSON_UNLIKELY(exp > maxExp))
-                            RAPIDJSON_PARSE_ERROR(kParseErrorNumberTooBig, startOffset);
+                            RAPIDJSON_PARSE_ERROR(kParseErrorNumberTooBig, currentRow, startOffset);
                     }
                 }
             }
             else
-                RAPIDJSON_PARSE_ERROR(kParseErrorNumberMissExponent, s.Tell());
+                RAPIDJSON_PARSE_ERROR(kParseErrorNumberMissExponent, currentRow, s.Tell());
 
             if (expMinus)
                 exp = -exp;
@@ -1710,7 +1777,7 @@ private:
                if (d > (std::numeric_limits<double>::max)()) {
                    // Overflow
                    // TODO: internal::StrtodX should report overflow (or underflow)
-                   RAPIDJSON_PARSE_ERROR(kParseErrorNumberTooBig, startOffset);
+                   RAPIDJSON_PARSE_ERROR(kParseErrorNumberTooBig, currentRow, startOffset);
                }
 
                cont = handler.Double(minus ? -d : d);
@@ -1734,7 +1801,7 @@ private:
            }
         }
         if (RAPIDJSON_UNLIKELY(!cont))
-            RAPIDJSON_PARSE_ERROR(kParseErrorTermination, startOffset);
+            RAPIDJSON_PARSE_ERROR(kParseErrorTermination, currentRow, startOffset);
     }
 
     // Parse any JSON value
@@ -2023,7 +2090,7 @@ private:
             bool hr = (dst == IterativeParsingObjectInitialState) ? handler.StartObject() : handler.StartArray();
             // On handler short circuits the parsing.
             if (!hr) {
-                RAPIDJSON_PARSE_ERROR_NORETURN(kParseErrorTermination, is.Tell());
+                RAPIDJSON_PARSE_ERROR_NORETURN(kParseErrorTermination, currentRow, is.Tell());
                 return IterativeParsingErrorState;
             }
             else {
@@ -2071,7 +2138,7 @@ private:
         {
             // Transit from delimiter is only allowed when trailing commas are enabled
             if (!(parseFlags & kParseTrailingCommasFlag) && src == IterativeParsingMemberDelimiterState) {
-                RAPIDJSON_PARSE_ERROR_NORETURN(kParseErrorObjectMissName, is.Tell());
+                RAPIDJSON_PARSE_ERROR_NORETURN(kParseErrorObjectMissName, currentRow, is.Tell());
                 return IterativeParsingErrorState;
             }
             // Get member count.
@@ -2088,7 +2155,7 @@ private:
             bool hr = handler.EndObject(c);
             // On handler short circuits the parsing.
             if (!hr) {
-                RAPIDJSON_PARSE_ERROR_NORETURN(kParseErrorTermination, is.Tell());
+                RAPIDJSON_PARSE_ERROR_NORETURN(kParseErrorTermination, currentRow, is.Tell());
                 return IterativeParsingErrorState;
             }
             else {
@@ -2101,7 +2168,7 @@ private:
         {
             // Transit from delimiter is only allowed when trailing commas are enabled
             if (!(parseFlags & kParseTrailingCommasFlag) && src == IterativeParsingElementDelimiterState) {
-                RAPIDJSON_PARSE_ERROR_NORETURN(kParseErrorValueInvalid, is.Tell());
+                RAPIDJSON_PARSE_ERROR_NORETURN(kParseErrorValueInvalid, currentRow, is.Tell());
                 return IterativeParsingErrorState;
             }
             // Get element count.
@@ -2118,7 +2185,7 @@ private:
             bool hr = handler.EndArray(c);
             // On handler short circuits the parsing.
             if (!hr) {
-                RAPIDJSON_PARSE_ERROR_NORETURN(kParseErrorTermination, is.Tell());
+                RAPIDJSON_PARSE_ERROR_NORETURN(kParseErrorTermination, currentRow, is.Tell());
                 return IterativeParsingErrorState;
             }
             else {
@@ -2157,16 +2224,16 @@ private:
         }
 
         switch (src) {
-        case IterativeParsingStartState:            RAPIDJSON_PARSE_ERROR(kParseErrorDocumentEmpty, is.Tell()); return;
-        case IterativeParsingFinishState:           RAPIDJSON_PARSE_ERROR(kParseErrorDocumentRootNotSingular, is.Tell()); return;
+        case IterativeParsingStartState:            RAPIDJSON_PARSE_ERROR(kParseErrorDocumentEmpty, currentRow, is.Tell()); return;
+        case IterativeParsingFinishState:           RAPIDJSON_PARSE_ERROR(kParseErrorDocumentRootNotSingular, currentRow, is.Tell()); return;
         case IterativeParsingObjectInitialState:
-        case IterativeParsingMemberDelimiterState:  RAPIDJSON_PARSE_ERROR(kParseErrorObjectMissName, is.Tell()); return;
-        case IterativeParsingMemberKeyState:        RAPIDJSON_PARSE_ERROR(kParseErrorObjectMissColon, is.Tell()); return;
-        case IterativeParsingMemberValueState:      RAPIDJSON_PARSE_ERROR(kParseErrorObjectMissCommaOrCurlyBracket, is.Tell()); return;
+        case IterativeParsingMemberDelimiterState:  RAPIDJSON_PARSE_ERROR(kParseErrorObjectMissName, currentRow, is.Tell()); return;
+        case IterativeParsingMemberKeyState:        RAPIDJSON_PARSE_ERROR(kParseErrorObjectMissColon, currentRow, is.Tell()); return;
+        case IterativeParsingMemberValueState:      RAPIDJSON_PARSE_ERROR(kParseErrorObjectMissCommaOrCurlyBracket, currentRow, is.Tell()); return;
         case IterativeParsingKeyValueDelimiterState:
         case IterativeParsingArrayInitialState:
-        case IterativeParsingElementDelimiterState: RAPIDJSON_PARSE_ERROR(kParseErrorValueInvalid, is.Tell()); return;
-        default: RAPIDJSON_ASSERT(src == IterativeParsingElementState); RAPIDJSON_PARSE_ERROR(kParseErrorArrayMissCommaOrSquareBracket, is.Tell()); return;
+        case IterativeParsingElementDelimiterState: RAPIDJSON_PARSE_ERROR(kParseErrorValueInvalid, currentRow, is.Tell()); return;
+        default: RAPIDJSON_ASSERT(src == IterativeParsingElementState); RAPIDJSON_PARSE_ERROR(kParseErrorArrayMissCommaOrSquareBracket, currentRow, is.Tell()); return;
         }
     }
 
@@ -2217,6 +2284,8 @@ private:
     internal::Stack<StackAllocator> stack_;  //!< A stack for storing decoded string temporarily during non-destructive parsing.
     ParseResult parseResult_;
     IterativeParsingState state_;
+
+    int currentRow;
 }; // class GenericReader
 
 //! Reader with UTF8 encoding and default allocator.
