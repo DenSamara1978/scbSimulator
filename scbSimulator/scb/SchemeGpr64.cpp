@@ -9,7 +9,8 @@ using util::inRange;
 SchemeGpr64::SchemeGpr64(const wstring& name, int nPrepareCircuits, int nMainCircuits, int nStaticSensitives, int nDynamicSensitives) :
 	Scheme(name, nPrepareCircuits, nMainCircuits, nStaticSensitives, nDynamicSensitives),
 	status {0L, 0L},
-	sensitives {0L, 0L}
+	sensitives {0L, 0L},
+	staticSensitives {0L, 0L}
 {
 	const size_t size = 2 * 2 * (this->nPrepareCircuits + this->nMainCircuits + this->nStaticSensitives + this->nDynamicSensitives + 1);
 	this->memory = new unsigned long[size << 1];
@@ -129,7 +130,7 @@ void SchemeGpr64::recalculate()
 		for (const auto& device : this->devices)
 			device->changeStatus(stream);
 
-		memcpy(result, this->constSensitiveMask, 8);
+		memset(result, 0, 8);
 
 		const int loop3 = this->nStaticSensitives;
 		for (i = 0; i < loop3; ++i)
@@ -141,7 +142,13 @@ void SchemeGpr64::recalculate()
 				result[1] |= this->staticSensitiveResults[i * 2 + 1];
 			}
 		}
+
+		this->staticSensitives[0] = result[0];
+		this->staticSensitives[1] = result[1];
 	}
+
+	result[0] = this->constSensitiveMask[0] | this->staticSensitives[0];
+	result[1] = this->constSensitiveMask[1] | this->staticSensitives[1];
 
 	const int loop4 = this->nDynamicSensitives;
 	for (i = 0; i < loop4; ++i)
@@ -181,15 +188,22 @@ void SchemeGpr64::resetStatusBit(int bit)
 
 void SchemeGpr64::correctInputStatus(const OutputStream& maskOn, const OutputStream& maskOff, int id)
 {
-	unsigned long difference = 0;
-	unsigned long oldStatus0, oldStatus1;
+	unsigned long dynDifference = 0;
+	unsigned long sensDifference = 0;
 
-	oldStatus0 = this->status[0];
-	oldStatus1 = this->status[1];
-	this->status[0] = (this->status[0] & maskOff.mask[0]) | maskOn.mask[0];
-	this->status[1] = (this->status[1] & maskOff.mask[1]) | maskOn.mask[1];
-	difference = (oldStatus0 ^ this->status[0]) | (oldStatus1 ^ this->status[1]);
+	for (int i = 0; i < 2; ++i)
+	{
+		unsigned long oldStatus;
+		unsigned long difference;
+		oldStatus = this->status[i];
+		this->status[i] = (this->status[i] & maskOff.mask[i]) | maskOn.mask[i];
+		difference = (oldStatus ^ this->status[i]);
+		dynDifference |= difference & this->dynSensitiveMask[i];
+		sensDifference |= difference & this->sensitives[i];
+	}
 
-	if (difference != 0)
+	if (sensDifference != 0)
 		this->markToFullRecalculating();
+	else if (dynDifference != 0)
+		this->markToDynamicSensitivesRecalculating();
 }

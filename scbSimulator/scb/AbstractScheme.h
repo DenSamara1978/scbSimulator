@@ -46,6 +46,7 @@ namespace scb
 		void markRecalculated();
 		bool isMarkedToDynamicSensitivesRecalculating() const;
 		bool isMarkedToFullRecalculating() const;
+		bool isNotMarkedToRecalculate() const;
 
 		unsigned long long getDiffTime(const LARGE_INTEGER& start, const LARGE_INTEGER& end) const;
 		vector<unsigned long long> workingTimes;
@@ -96,6 +97,11 @@ namespace scb
 	inline bool AbstractScheme::isMarkedToFullRecalculating() const
 	{
 		return (this->depthOfRecalculating == 2);
+	}
+
+	inline bool AbstractScheme::isNotMarkedToRecalculate() const
+	{
+		return (this->depthOfRecalculating == 0);
 	}
 
 	inline unsigned long long AbstractScheme::getDiffTime(const LARGE_INTEGER& start, const LARGE_INTEGER& end) const

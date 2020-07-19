@@ -26,6 +26,7 @@ namespace scb
 	private:
 		__m128i status[2]; // Слово состояния схемы
 		__m128i sensitives[2]; // Слово чувствительности схемы
+		__m128i staticSensitives[2]; // Статические чувствительности
 
 		__m128i* memory; // Массив бинарных данных
 

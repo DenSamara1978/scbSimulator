@@ -9,7 +9,8 @@ using util::inRange;
 SchemeSse16::SchemeSse16(const wstring& name, int nPrepareCircuits, int nMainCircuits, int nStaticSensitives, int nDynamicSensitives) :
 	Scheme(name, (nPrepareCircuits + 7) & 0xFFFFFFF8, (nMainCircuits + 7) & 0xFFFFFFF8, (nStaticSensitives + 7) & 0xFFFFFFF8, (nDynamicSensitives + 7) & 0xFFFFFFF8),
 	status(_mm_setzero_si128()),
-	sensitives(_mm_setzero_si128())
+	sensitives(_mm_setzero_si128()),
+	staticSensitives(_mm_setzero_si128())
 {
 	const size_t size = 2 * 2 * (this->nPrepareCircuits + this->nMainCircuits + this->nStaticSensitives + this->nDynamicSensitives + 1);
 	this->memory = static_cast <__m128i*> (_mm_malloc(size, 16));
@@ -141,7 +142,7 @@ void SchemeSse16::recalculate()
 		for (const auto& device : this->devices)
 			device->changeStatus(result);
 
-		result.sseMask[0] = this->constSensitiveMask[0];
+		result.sseMask[0] = _mm_setzero_si128();
 
 		const int loop3 = this->nStaticSensitives >> 3;
 		for (i = 0; i < loop3; ++i)
@@ -149,7 +150,11 @@ void SchemeSse16::recalculate()
 			temp = _mm_cmpeq_epi16(_mm_andnot_si128(mask, this->staticSensitiveMasks[i]), zero);
 			result.sseMask[0] = _mm_or_si128(result.sseMask[0], _mm_and_si128(temp, this->staticSensitiveResults[i]));
 		}
+
+		this->staticSensitives = result.sseMask[0];
 	}
+
+	result.sseMask[0] = _mm_or_si128(this->constSensitiveMask[0], this->staticSensitives);
 
 	const int loop4 = this->nDynamicSensitives >> 3;
 	for (i = 0; i < loop4; ++i)
@@ -192,9 +197,18 @@ void SchemeSse16::correctInputStatus(const OutputStream& maskOn, const OutputStr
 	temp = _mm_or_si128(temp, _mm_shufflelo_epi16(temp, _MM_SHUFFLE(2, 3, 0, 1)));
 	this->status = _mm_shuffle_epi32(temp, _MM_SHUFFLE(0, 0, 0, 0));
 
-	if (!this->isMarkedToFullRecalculating())
+	if (this->isNotMarkedToRecalculate())
 	{
-		if (_mm_movemask_epi8(_mm_cmpeq_epi32(_mm_xor_si128(oldStatus, this->status), _mm_setzero_si128())) != 0xFFFF)
+		const __m128i difference = _mm_xor_si128(oldStatus, this->status);
+		const __m128i sensDifference = _mm_and_si128(difference, this->sensitives);
+
+		if (_mm_movemask_epi8(_mm_cmpeq_epi32(sensDifference, _mm_setzero_si128())) != 0xFFFF)
 			this->markToFullRecalculating();
+		else
+		{
+			const __m128i dynDifference = _mm_and_si128(difference, this->dynSensitiveMask[0]);
+			if (_mm_movemask_epi8(_mm_cmpeq_epi32(dynDifference, _mm_setzero_si128())) != 0xFFFF)
+				this->markToDynamicSensitivesRecalculating();
+		}
 	}
 }

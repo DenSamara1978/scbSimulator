@@ -27,6 +27,7 @@ namespace scb
 	protected:
 		unsigned long status[2]; // Слово состояния схемы
 		unsigned long sensitives[2]; // Слово чувствительности схемы
+		unsigned long staticSensitives[2]; // Статические чувствительности
 
 		unsigned long* memory; // Массив бинарных данных
 

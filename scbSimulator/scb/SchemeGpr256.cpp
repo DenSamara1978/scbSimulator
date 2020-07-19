@@ -9,7 +9,8 @@ using util::inRange;
 SchemeGpr256::SchemeGpr256(const wstring& name, int nPrepareCircuits, int nMainCircuits, int nStaticSensitives, int nDynamicSensitives) :
 	Scheme(name, nPrepareCircuits, nMainCircuits, nStaticSensitives, nDynamicSensitives),
 	status {0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L},
-	sensitives {0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L}
+	sensitives {0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L},
+	staticSensitives {0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L}
 {
 	const size_t size = 8 * 2 * (this->nPrepareCircuits + this->nMainCircuits + this->nStaticSensitives + this->nDynamicSensitives + 1);
 	this->memory = new unsigned long[size << 3];
@@ -154,7 +155,7 @@ void SchemeGpr256::recalculate()
 		for (const auto& device : this->devices)
 			device->changeStatus(stream);
 
-		memcpy(result, this->constSensitiveMask, 32);
+		memset(result, 0, 32);
 
 		const int loop3 = this->nStaticSensitives;
 		for (i = 0; i < loop3; ++i)
@@ -175,7 +176,25 @@ void SchemeGpr256::recalculate()
 				result[7] |= this->staticSensitiveResults[i * 8 + 7];
 			}
 		}
+
+		this->staticSensitives[0] = result[0];
+		this->staticSensitives[1] = result[1];
+		this->staticSensitives[2] = result[2];
+		this->staticSensitives[3] = result[3];
+		this->staticSensitives[4] = result[4];
+		this->staticSensitives[5] = result[5];
+		this->staticSensitives[6] = result[6];
+		this->staticSensitives[7] = result[7];
 	}
+
+	result[0] = this->constSensitiveMask[0] | this->staticSensitives[0];
+	result[1] = this->constSensitiveMask[1] | this->staticSensitives[1];
+	result[2] = this->constSensitiveMask[2] | this->staticSensitives[2];
+	result[3] = this->constSensitiveMask[3] | this->staticSensitives[3];
+	result[4] = this->constSensitiveMask[4] | this->staticSensitives[4];
+	result[5] = this->constSensitiveMask[5] | this->staticSensitives[5];
+	result[6] = this->constSensitiveMask[6] | this->staticSensitives[6];
+	result[7] = this->constSensitiveMask[7] | this->staticSensitives[7];
 
 	const int loop4 = this->nDynamicSensitives;
 	for (i = 0; i < loop4; ++i)
@@ -224,16 +243,22 @@ void SchemeGpr256::resetStatusBit(int bit)
 
 void SchemeGpr256::correctInputStatus(const OutputStream& maskOn, const OutputStream& maskOff, int id)
 {
-	unsigned long difference = 0;
-	unsigned long oldStatus;
+	unsigned long dynDifference = 0;
+	unsigned long sensDifference = 0;
 
 	for (int i = 0; i < 8; ++i)
 	{
+		unsigned long oldStatus;
+		unsigned long difference;
 		oldStatus = this->status[i];
 		this->status[i] = (this->status[i] & maskOff.mask[i]) | maskOn.mask[i];
-		difference |= oldStatus ^ this->status[i];
+		difference = (oldStatus ^ this->status[i]);
+		dynDifference |= difference & this->dynSensitiveMask[i];
+		sensDifference |= difference & this->sensitives[i];
 	}
 
-	if (difference != 0)
+	if (sensDifference != 0)
 		this->markToFullRecalculating();
+	else if (dynDifference != 0)
+		this->markToDynamicSensitivesRecalculating();
 }

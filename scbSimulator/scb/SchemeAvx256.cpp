@@ -11,7 +11,8 @@ using util::inRange;
 SchemeAvx256::SchemeAvx256(const wstring& name, int nPrepareCircuits, int nMainCircuits, int nStaticSensitives, int nDynamicSensitives) :
 	Scheme(name, nPrepareCircuits, nMainCircuits, nStaticSensitives, nDynamicSensitives),
 	status(_mm256_setzero_si256()),
-	sensitives(_mm256_setzero_si256())
+	sensitives(_mm256_setzero_si256()),
+	staticSensitives(_mm256_setzero_si256())
 {
 	const size_t size = 32 * 2 * (this->nPrepareCircuits + this->nMainCircuits + this->nStaticSensitives + this->nDynamicSensitives + 1);
 	this->memory = static_cast <__m256i*> (_mm_malloc(size, 16));
@@ -127,7 +128,7 @@ void SchemeAvx256::recalculate()
 		for (const auto& device : this->devices)
 			device->changeStatus(result);
 
-		result.avxMask = this->constSensitiveMask[0];
+		result.avxMask = _mm256_setzero_si256();
 
 		const int loop3 = this->nStaticSensitives;
 		for (i = 0; i < loop3; ++i)
@@ -137,7 +138,11 @@ void SchemeAvx256::recalculate()
 			temp = _mm256_and_si256(temp, _mm256_permute4x64_epi64(temp, _MM_SHUFFLE(1, 0, 3, 2)));
 			result.avxMask = _mm256_or_si256(result.avxMask, _mm256_and_si256(temp, this->staticSensitiveResults[i]));
 		}
+
+		this->staticSensitives = result.avxMask;
 	}
+
+	result.avxMask = _mm256_or_si256(this->constSensitiveMask[0], this->staticSensitives);
 
 	const int loop4 = this->nDynamicSensitives;
 	for (i = 0; i < loop4; ++i)
@@ -180,14 +185,21 @@ void SchemeAvx256::correctInputStatus(const OutputStream& maskOn, const OutputSt
 	const __m256i oldStatus = this->status;
 	this->status = _mm256_or_si256(maskOn.avxMask, _mm256_and_si256(this->status, maskOff.avxMask));
 
-	if (!this->isMarkedToFullRecalculating())
+	if (this->isNotMarkedToRecalculate())
 	{
-		__m256i temp = _mm256_cmpeq_epi64(_mm256_xor_si256(oldStatus, this->status), _mm256_setzero_si256());
+		const __m256i difference = _mm256_xor_si256(oldStatus, this->status);
+		const __m256i sensDifference = _mm256_and_si256(difference, this->sensitives);
+		__m256i temp = _mm256_cmpeq_epi64(sensDifference, _mm256_setzero_si256());
 		temp = _mm256_and_si256(temp, _mm256_permute4x64_epi64(temp, _MM_SHUFFLE(1, 0, 3, 2)));
 		if (_mm_movemask_epi8(_mm256_castsi256_si128(temp)) != 0xFFFF)
-		{
-			// Слово состояния контактов изменилось - надо ставить схемы на расчет
 			this->markToFullRecalculating();
+		else
+		{
+			const __m256i dynDifference = _mm256_and_si256(difference, this->dynSensitiveMask[0]);
+			temp = _mm256_cmpeq_epi64(dynDifference, _mm256_setzero_si256());
+			temp = _mm256_and_si256(temp, _mm256_permute4x64_epi64(temp, _MM_SHUFFLE(1, 0, 3, 2)));
+			if (_mm_movemask_epi8(_mm256_castsi256_si128(temp)) != 0xFFFF)
+				this->markToDynamicSensitivesRecalculating();
 		}
 	}
 }

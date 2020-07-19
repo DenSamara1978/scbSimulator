@@ -9,7 +9,8 @@ using util::inRange;
 SchemeGpr32::SchemeGpr32(const wstring& name, int nPrepareCircuits, int nMainCircuits, int nStaticSensitives, int nDynamicSensitives) :
 	Scheme(name, nPrepareCircuits, nMainCircuits, nStaticSensitives, nDynamicSensitives),
 	status(0L),
-	sensitives(0L)
+	sensitives(0L),
+	staticSensitives(0L)
 {
 	const size_t size = 2 * (this->nPrepareCircuits + this->nMainCircuits + this->nStaticSensitives + this->nDynamicSensitives + 1);
 	this->memory = new unsigned long[size];
@@ -119,7 +120,7 @@ void SchemeGpr32::recalculate()
 		for (const auto& device : this->devices)
 			device->changeStatus(stream);
 
-		result = this->constSensitiveMask[0];
+		result = 0;
 
 		const int loop3 = this->nStaticSensitives;
 		for (i = 0; i < loop3; ++i)
@@ -127,7 +128,11 @@ void SchemeGpr32::recalculate()
 			if ((mask & this->staticSensitiveMasks[i]) == 0)
 				result |= this->staticSensitiveResults[i];
 		}
+
+		this->staticSensitives = result;
 	}
+
+	result = this->constSensitiveMask[0] | this->staticSensitives;
 
 	const int loop4 = this->nDynamicSensitives;
 	for (i = 0; i < loop4; ++i)
@@ -162,10 +167,18 @@ void SchemeGpr32::resetStatusBit(int bit)
 void SchemeGpr32::correctInputStatus(const OutputStream& maskOn, const OutputStream& maskOff, int id)
 {
 	unsigned long oldStatus;
+	unsigned long difference;
+	unsigned long dynDifference;
+	unsigned long sensDifference;
 
 	oldStatus = this->status;
 	this->status = (this->status & maskOff.mask[0]) | maskOn.mask[0];
+	difference = (oldStatus ^ this->status);
+	dynDifference = difference & this->dynSensitiveMask[0];
+	sensDifference = difference & this->sensitives;
 
-	if (oldStatus != this->status)
+	if (sensDifference != 0)
 		this->markToFullRecalculating();
+	else if (dynDifference != 0)
+		this->markToDynamicSensitivesRecalculating();
 }

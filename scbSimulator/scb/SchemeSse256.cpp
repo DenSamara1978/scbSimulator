@@ -9,7 +9,8 @@ using util::inRange;
 SchemeSse256::SchemeSse256(const wstring& name, int nPrepareCircuits, int nMainCircuits, int nStaticSensitives, int nDynamicSensitives) :
 	Scheme(name, nPrepareCircuits, nMainCircuits, nStaticSensitives, nDynamicSensitives),
 	status {_mm_setzero_si128(), _mm_setzero_si128()},
-	sensitives {_mm_setzero_si128(), _mm_setzero_si128()}
+	sensitives {_mm_setzero_si128(), _mm_setzero_si128()},
+	staticSensitives {_mm_setzero_si128(), _mm_setzero_si128()}
 {
 	const size_t size = 16 * 6 * (this->nPrepareCircuits + this->nMainCircuits + this->nStaticSensitives + this->nDynamicSensitives + 1);
 	this->memory = static_cast <__m128i*> (_mm_malloc(size, 16));
@@ -22,7 +23,7 @@ SchemeSse256::SchemeSse256(const wstring& name, int nPrepareCircuits, int nMainC
 	this->dynamicSensitiveMasks = this->staticSensitiveMasks + this->nStaticSensitives * 6;
 	this->dynamicSensitiveResults = this->dynamicSensitiveMasks + this->nDynamicSensitives * 2;
 	this->dynSensitiveMask = this->dynamicSensitiveMasks + this->nDynamicSensitives * 6;
-	this->constSensitiveMask = this->dynSensitiveMask + 1;
+	this->constSensitiveMask = this->dynSensitiveMask + 2;
 	memset(this->memory, 0, size);
 }
 
@@ -151,8 +152,8 @@ void SchemeSse256::recalculate()
 		for (const auto& device : this->devices)
 			device->changeStatus(result);
 
-		result.sseMask[0] = this->constSensitiveMask[0];
-		result.sseMask[1] = this->constSensitiveMask[1];
+		result.sseMask[0] = _mm_setzero_si128();
+		result.sseMask[1] = _mm_setzero_si128();
 
 		const int loop3 = this->nStaticSensitives;
 		for (i = 0; i < loop3; ++i)
@@ -165,7 +166,13 @@ void SchemeSse256::recalculate()
 			result.sseMask[0] = _mm_or_si128(result.sseMask[0], this->staticSensitiveResults[(i << 2) + cmp]);
 			result.sseMask[1] = _mm_or_si128(result.sseMask[1], this->staticSensitiveResults[(i << 2) + 2 + cmp]);
 		}
+
+		this->staticSensitives[0] = result.sseMask[0];
+		this->staticSensitives[1] = result.sseMask[1];
 	}
+
+	result.sseMask[0] = _mm_or_si128(this->constSensitiveMask[0], this->staticSensitives[0]);
+	result.sseMask[1] = _mm_or_si128(this->constSensitiveMask[1], this->staticSensitives[1]);
 
 	const int loop4 = this->nDynamicSensitives;
 	for (i = 0; i < loop4; ++i)
@@ -210,12 +217,22 @@ void SchemeSse256::resetStatusBit(int bit)
 void SchemeSse256::correctInputStatus(const OutputStream& maskOn, const OutputStream& maskOff, int id)
 {
 	const __m128i oldStatus[2] = {this->status[0], this->status[1]};
-	this->status[0] = _mm_or_si128(_mm_load_si128(maskOn.sseMask), _mm_and_si128(this->status[0], _mm_load_si128(maskOff.sseMask)));
-	this->status[1] = _mm_or_si128(_mm_load_si128(maskOn.sseMask + 1), _mm_and_si128(this->status[1], _mm_load_si128(maskOff.sseMask + 1)));
+	this->status[0] = _mm_or_si128(maskOn.sseMask[0], _mm_and_si128(this->status[0], maskOff.sseMask[0]));
+	this->status[1] = _mm_or_si128(maskOn.sseMask[1], _mm_and_si128(this->status[1], maskOff.sseMask[1]));
 
-	if (!this->isMarkedToFullRecalculating())
+	if (this->isNotMarkedToRecalculate())
 	{
-		if (_mm_movemask_epi8(_mm_cmpeq_epi32(_mm_or_si128(_mm_xor_si128(oldStatus[0], this->status[0]), _mm_xor_si128(oldStatus[1], this->status[1])), _mm_setzero_si128())) != 0xFFFF)
+		const __m128i difference0 = _mm_xor_si128(oldStatus[0], this->status[0]);
+		const __m128i difference1 = _mm_xor_si128(oldStatus[1], this->status[1]);
+		const __m128i sensDifference = _mm_or_si128(_mm_and_si128(difference0, this->sensitives[0]), _mm_and_si128(difference1, this->sensitives[1]));
+
+		if (_mm_movemask_epi8(_mm_cmpeq_epi32(sensDifference, _mm_setzero_si128())) != 0xFFFF)
 			this->markToFullRecalculating();
+		else
+		{
+			const __m128i dynDifference = _mm_or_si128(_mm_and_si128(difference0, this->dynSensitiveMask[0]), _mm_and_si128(difference1, this->dynSensitiveMask[1]));
+			if (_mm_movemask_epi8(_mm_cmpeq_epi32(dynDifference, _mm_setzero_si128())) != 0xFFFF)
+				this->markToDynamicSensitivesRecalculating();
+		}
 	}
 }

@@ -475,7 +475,7 @@ HRESULT Application::initializeWindow(HINSTANCE hInstance, int nCmdShow, const w
 	pScheme->setMainCircuit(26, mask, result);
 
 	// Маски чувствительностей
-	mask = {0, 0, 0, 0, 0, 0, 0, 0};
+	mask = {0xFFFFFFFF, 0xFFFFFFFF, 0xFFFFFFFF, 0xFFFFFFFF, 0xFFFFFFFF, 0xFFFFFFFF, 0xFFFFFFFF, 0xFFFFFFFF};
 	result = {0, 0, 0, 0, 0, 0, 0, 0};
 	pScheme->setSensitiveMasks(mask, result);
 
@@ -486,7 +486,7 @@ HRESULT Application::initializeWindow(HINSTANCE hInstance, int nCmdShow, const w
 	//	pBus->mapInputOutput ( 0, 0, 17 );
 
 	// Тестовая схема для проверки работоспособности любого типа схем
-	const int stride = 32;
+	const int stride = 256;
 	pScheme = schemeServer->addNewScheme(L"Светофор.М3.Исполнение", 0, stride, 0, 0);
 	pScheme->setDeviceCount(stride);
 
@@ -509,7 +509,7 @@ HRESULT Application::initializeWindow(HINSTANCE hInstance, int nCmdShow, const w
 	pScheme->setMainCircuit(stride - 1, mask, result);
 
 	// Маски чувствительностей
-	mask = {0, 0, 0, 0, 0, 0, 0, 0};
+	mask = {0xFFFFFFFF, 0xFFFFFFFF, 0xFFFFFFFF, 0xFFFFFFFF, 0xFFFFFFFF, 0xFFFFFFFF, 0xFFFFFFFF, 0xFFFFFFFF};
 	result = {0, 0, 0, 0, 0, 0, 0, 0};
 	pScheme->setSensitiveMasks(mask, result);
 
